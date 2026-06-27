@@ -1,14 +1,8 @@
 import 'package:menu_app/constants/colours.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:menu_app/variables/date.dart' as date;
 import 'package:url_launcher/url_launcher.dart';
-import 'package:intl/intl.dart';
-
-// get month
-String getMonthYear() {
-  DateTime now = DateTime.now();
-  return DateFormat('MMMM yyyy').format(now);
-}
 
 class TopBar extends StatelessWidget {
   const TopBar({super.key});
@@ -31,7 +25,8 @@ class TopBar extends StatelessWidget {
             ),
           
             Text(
-              getMonthYear(),
+              // date.getDayMonthYear(),
+              date.getDate(),
               style: TextStyle(
                 color: text,
                 fontSize: 18,

@@ -9,6 +9,7 @@ import 'package:menu_app/gsheets_api.dart';
 import 'package:menu_app/constants/colours.dart';
 import 'package:menu_app/top_bar.dart';
 import 'package:menu_app/constants/common_values.dart';
+import 'package:menu_app/day_list.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -59,11 +60,12 @@ class _LandingPageState extends State<LandingPage> {
             TopBar(),
 
             const SizedBox(height: secondaryPadding),
-
+          
             Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+
                   Container(
                     width: 50,
                     color: accent,
@@ -71,11 +73,37 @@ class _LandingPageState extends State<LandingPage> {
 
                   const SizedBox(width: tertiaryPadding),
 
+                  // Day list
                   Expanded(
-                    child: Container(
-                      color: accent,
-                    ),
-                  )
+                    child: RefreshIndicator(
+                      color: Colors.white,
+                      backgroundColor: mainBg,
+                      onRefresh: () async {
+                        await GoogleSheetsApi.loadTransactions();
+                        setState(() {});
+                      },
+
+                      child: MediaQuery.removePadding(
+                        context: context,
+                        removeTop: true,
+                        child: GoogleSheetsApi.loading == true ? const Center(
+                          child: CircularProgressIndicator(),
+                        ) : ListView.builder(
+                          itemCount: GoogleSheetsApi.currentTransactions.length,
+                          itemBuilder: (context, index) {
+                            final reversedList = GoogleSheetsApi.currentTransactions.reversed.toList();
+
+                            return DayList(
+                              date: reversedList[index][0],            // e.g., Date
+                              day: reversedList[index][1],            // e.g., Day of the week
+                              breakfast_id: reversedList[index][2], // e.g., Breakfast (Initially "" if empty)
+                              lunch_id: reversedList[index][3],           // e.g., Lunch (Initially "" if empty)
+                              dinner_id: reversedList[index][4],           // e.g., Dinner (Initially "" if empty)
+                            );
+                        }),
+                      ),
+                    )
+                  ),
                 ],
               ),
             ),
