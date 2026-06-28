@@ -5,7 +5,7 @@ import 'package:menu_app/gsheets_api.dart';
 import 'package:menu_app/constants/colours.dart';
 import 'package:menu_app/top_bar.dart';
 import 'package:menu_app/constants/common_values.dart';
-import 'package:menu_app/day_list.dart';
+import 'package:menu_app/day/day_list.dart';
 import 'package:menu_app/variables/date.dart' as date;
 
 class LandingPage extends StatefulWidget {
@@ -50,7 +50,7 @@ class _LandingPageState extends State<LandingPage> {
   // Scroll the page view to today's date if it exists in the list.
   void _jumpToToday() {
     final todayDate = date.getDate();
-    final list = GoogleSheetsApi.currentTransactions;
+    final list = GoogleSheetsApi.calendarDates;
 
     final int todayIndex = list.indexWhere((row) => row[0] == todayDate);
 
@@ -64,7 +64,7 @@ class _LandingPageState extends State<LandingPage> {
 
   // Reload the sheet data from the pull-to-refresh action.
   Future<void> _refreshTransactions() async {
-    await GoogleSheetsApi.loadTransactions();
+    await GoogleSheetsApi.refreshData();
     setState(() {});
   }
 
@@ -86,64 +86,52 @@ class _LandingPageState extends State<LandingPage> {
             TopBar(),
             const SizedBox(height: secondaryPadding),
             Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Container(width: 50, color: accent),
-                  const SizedBox(width: tertiaryPadding),
-                  Expanded(
-                    child: RefreshIndicator(
-                      color: Colors.white,
-                      backgroundColor: mainBg,
-                      onRefresh: _refreshTransactions,
-                      child: GoogleSheetsApi.loading
-                          ? const Center(child: CircularProgressIndicator())
-                          : LayoutBuilder(
-                              builder: (context, constraints) {
-                                final double pageSpacing = 10.0;
-                                final double pageHeight = constraints.maxHeight - pageSpacing;
-                                final list = GoogleSheetsApi.currentTransactions;
-                                final int itemCount = list.length;
-
-                                Widget buildPage(int index) {
-                                  final bool isCurrentPage = index == currentPageIndex;
-                                  return Padding(
-                                    padding: EdgeInsets.only(
-                                      bottom: index == itemCount - 1 ? 0 : pageSpacing,
-                                    ),
-                                    child: SizedBox(
-                                      height: pageHeight,
-                                      child: DayList(
-                                        date: list[index][0],
-                                        day: list[index][1],
-                                        breakfast_id: list[index][2],
-                                        lunch_id: list[index][3],
-                                        dinner_id: list[index][4],
-                                        isCurrentPage: isCurrentPage,
-                                        height: pageHeight,
-                                      ),
-                                    ),
-                                  );
-                                }
-
-                                return PageView.builder(
-                                  controller: pageController,
-                                  scrollDirection: Axis.vertical,
-                                  itemCount: itemCount,
-                                  onPageChanged: (index) {
-                                    setState(() {
-                                      currentPageIndex = index;
-                                    });
-                                  },
-                                  itemBuilder: (context, index) {
-                                    return buildPage(index);
-                                  },
-                                );
-                              },
-                            ),
-                    ),
-                  ),
-                ],
+              child: RefreshIndicator(
+                color: Colors.white,
+                backgroundColor: mainBg,
+                onRefresh: _refreshTransactions,
+                child: GoogleSheetsApi.loading
+                    ? const Center(child: CircularProgressIndicator())
+                    : LayoutBuilder(
+                        builder: (context, constraints) {
+                          final double pageSpacing = 10.0;
+                          final double pageHeight = constraints.maxHeight - pageSpacing;
+                          final list = GoogleSheetsApi.calendarDates;
+                          final int itemCount = list.length;
+                            
+                          Widget buildPage(int index) {
+                            final bool isCurrentPage = index == currentPageIndex;
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                bottom: index == itemCount - 1 ? 0 : pageSpacing,
+                              ),
+                              child: SizedBox(
+                                height: pageHeight,
+                                child: DayList(
+                                  date: list[index][0],
+                                  day: list[index][1],
+                                  isCurrentPage: isCurrentPage,
+                                  height: pageHeight,
+                                ),
+                              ),
+                            );
+                          }
+                            
+                          return PageView.builder(
+                            controller: pageController,
+                            scrollDirection: Axis.vertical,
+                            itemCount: itemCount,
+                            onPageChanged: (index) {
+                              setState(() {
+                                currentPageIndex = index;
+                              });
+                            },
+                            itemBuilder: (context, index) {
+                              return buildPage(index);
+                            },
+                          );
+                        },
+                      ),
               ),
             ),
           ],

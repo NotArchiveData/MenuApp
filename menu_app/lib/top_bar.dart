@@ -1,6 +1,7 @@
 import 'package:menu_app/constants/colours.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:menu_app/constants/common_values.dart';
 import 'package:menu_app/variables/date.dart' as date;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,17 +20,16 @@ class TopBar extends StatelessWidget {
               "Meal Prep", 
               style: TextStyle(
                 color: text,
-                fontSize: 12,
+                fontSize: secondaryText,
                 fontWeight: FontWeight.w400,
                 ),
             ),
           
             Text(
-              // date.getDayMonthYear(),
-              date.getDate(),
+              date.getDayMonthYear(),
               style: TextStyle(
                 color: text,
-                fontSize: 18,
+                fontSize: primaryText,
                 fontWeight: FontWeight.w600,
                 ),
               textHeightBehavior: TextHeightBehavior(

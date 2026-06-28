@@ -8,6 +8,7 @@ final text = Color(0xFF46413B);
 
 // accent
 final accent = Color(0xFFE85D56);
+final darkAccent = Color(0xFFC73730);
 
 // white
 final white = Color(0xFFFFFFFF);
