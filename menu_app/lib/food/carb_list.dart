@@ -84,15 +84,37 @@ Widget carbList(BuildContext context, String panelDate) {
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          food.name,
-                                          style: const TextStyle(color: Colors.white, fontSize: 15),
+                                        Container(
+                                          height: 10,
+                                          width: 10,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white.withValues(alpha: 0.05),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
                                         ),
-                                        Text(
-                                          food.id.toUpperCase(),
-                                          style: TextStyle(color: fadedGrey, fontSize: 12),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              food.name,
+                                              style: const TextStyle(color: Colors.white, fontSize: 15),
+                                            ),
+                                            Text(
+                                              // Compute last-eaten when rendering the list for this dialog
+                                              () {
+                                                final days = GoogleSheetsApi.calculateDaysSinceLastEaten(
+                                                  panelDate: panelDate,
+                                                  columnIndex: 3,
+                                                  foodId: food.id,
+                                                );
+                                                if (days == -1) return 'last eaten: --';
+                                                return 'last eaten: $days day(s) ago';
+                                              }(),
+                                              style: TextStyle(color: fadedGrey, fontSize: 12),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
