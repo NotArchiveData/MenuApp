@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:menu_app/constants/colours.dart';
 import 'package:menu_app/constants/common_values.dart';
-import 'package:menu_app/day/drop_down.dart';
+import 'package:menu_app/day/button.dart';
 import 'package:menu_app/variables/date.dart';
 
 // <--- main DayList class. The stuff for the entire panel ---> 
@@ -50,15 +50,9 @@ class _DayListState extends State<DayList> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      buildMealSection("Breakfast", ["breakfast-dish-1", "breakfast-dish-2", "breakfast-carb"]),
-
-                      const SizedBox(height: 12),
-
-                      buildMealSection("Lunch", ["lunch-dish-1", "lunch-dish-2", "lunch-carb"]),
-
-                      const SizedBox(height: 12),
-                      
-                      buildMealSection("Dinner", ["dinner-dish-1", "dinner-dish-2", "dinner-carb"]),
+                      buildMealSection("Breakfast"),
+                      // buildMealSection("Lunch"),
+                      // buildMealSection("Dinner"),
                     ],
                   ),
                 ),
@@ -70,35 +64,14 @@ class _DayListState extends State<DayList> {
     );
   }
 
-  buildMealSection(String mealTitle, List<String> keys) {
-    // We match the keys you pass in with their constant layout rules
-    final List<DropdownConfig> autoConfigs = [
-      DropdownConfig(
-        key: keys[0], 
-        hintText: 'Dish', 
-        prefixes: ['v', 'nv'], // Adjusted to accept both based on your earlier prompt!
-      ),
-      DropdownConfig(
-        key: keys[1], 
-        hintText: 'Dish', 
-        prefixes: ['v', 'nv'],
-      ),
-      DropdownConfig(
-        key: keys[2], 
-        hintText: 'Carb', 
-        prefixes: ['c'],
-      ),
-    ];
-
-    // Return the actual external widget populated with the generated data
+  buildMealSection(String mealTitle) {
     return MealSection(
       title: mealTitle,
-      dropdownConfigs: autoConfigs,
+      panelDate: widget.date,
     );
   }
 
   // day of week and date and month
-  // see if you wish to add an "update" button in this. so when the menu is set, just press update. although a better UX would be auto update when any item from the drop down is pressed
   Widget topBar() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
