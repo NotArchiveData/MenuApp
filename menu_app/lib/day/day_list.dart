@@ -46,15 +46,14 @@ class _DayListState extends State<DayList> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(tertiaryPadding),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      buildMealSection(3, "Breakfast"),
-                      buildMealSection(6, "Lunch"),
-                      buildMealSection(9, "Dinner"),
-                    ],
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    buildMealSection(3, "Breakfast"),
+                    buildMealSection(6, "Lunch"),
+                    buildMealSection(9, "Dinner"),
+                  ],
                 ),
               ),
             ),

@@ -54,7 +54,8 @@ class TopBar extends StatelessWidget {
             customBorder: const CircleBorder(),
             child: Padding(
               padding: const EdgeInsets.all(10.0),
-              child: Icon(Icons.exit_to_app, color: Colors.white),
+              // child: Icon(Icons.exit_to_app, color: Colors.white),
+              child: Icon(Icons.refresh, color: Colors.white)
             ),
           ),
         ),
