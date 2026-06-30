@@ -50,9 +50,9 @@ class _DayListState extends State<DayList> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      buildMealSection("Breakfast"),
-                      // buildMealSection("Lunch"),
-                      // buildMealSection("Dinner"),
+                      buildMealSection(3, "Breakfast"),
+                      buildMealSection(6, "Lunch"),
+                      buildMealSection(9, "Dinner"),
                     ],
                   ),
                 ),
@@ -64,8 +64,9 @@ class _DayListState extends State<DayList> {
     );
   }
 
-  buildMealSection(String mealTitle) {
+  buildMealSection(int no, String mealTitle) {
     return MealSection(
+      no: no,
       title: mealTitle,
       panelDate: widget.date,
     );
