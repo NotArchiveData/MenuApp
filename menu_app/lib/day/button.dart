@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:menu_app/constants/colours.dart';
 import 'package:menu_app/constants/common_values.dart';
-import 'package:menu_app/food/carb_list.dart';
-import 'package:menu_app/food/dish_list.dart';
+import 'package:menu_app/day/carb_list.dart';
 import 'package:menu_app/gsheets_api.dart';
 
 // The shared meal section widget that composes several dropdowns.
@@ -78,23 +77,24 @@ class _MealSectionState extends State<MealSection> {
         
         Row(
           children: [
-            Expanded(child: buildButton(dishList, widget.no + 1, getFoodNameFromId(currentDish1Id), rowIndex, dish1Col)),
+            Expanded(child: buildButton(foodList, widget.no + 1, ["v", "nv"], getFoodNameFromId(currentDish1Id), rowIndex, dish1Col)),
             const SizedBox(width: 8),
-            Expanded(child: buildButton(dishList, widget.no + 2, getFoodNameFromId(currentDish2Id), rowIndex, dish2Col)),
+            Expanded(child: buildButton(foodList, widget.no + 2, ["v", "nv"], getFoodNameFromId(currentDish2Id), rowIndex, dish2Col)),
           ],
         ),
 
         const SizedBox(height: 8),
 
-        buildButton(carbList, widget.no, getFoodNameFromId(currentCarbId), rowIndex, carbCol),
+        buildButton(foodList, widget.no, ["c"], getFoodNameFromId(currentCarbId), rowIndex, carbCol),
       ],
     );
   }
 
   // 1. Update the signature definition inside buildButton's parameter list:
   Widget buildButton(
-    Widget Function(BuildContext, String, int) builderFunction, 
+    Widget Function(BuildContext, String, int, List<String>) builderFunction, 
     int columnNumberToAddFood,
+    List<String> prefix,
     String displayLabel, 
     int rowIndex, 
     int colIndex,
@@ -111,7 +111,7 @@ class _MealSectionState extends State<MealSection> {
         // 2. 💎 Pass BOTH the required context and your layout's panelDate into your custom builder here:
         final selectedFood = await showDialog<FoodOption>(
           context: context,
-          builder: (dialogContext) => builderFunction(dialogContext, widget.panelDate, columnNumberToAddFood),
+          builder: (dialogContext) => builderFunction(dialogContext, widget.panelDate, columnNumberToAddFood, prefix),
         );
 
         // 3. Keep the local state cache updated when an item returns

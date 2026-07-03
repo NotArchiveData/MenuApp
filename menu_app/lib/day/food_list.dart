@@ -2,10 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:menu_app/constants/colours.dart';
 import 'package:menu_app/constants/common_values.dart';
+import 'package:menu_app/day/add_dish.dart';
 import 'package:menu_app/gsheets_api.dart';
 
-Widget carbList(BuildContext context, String panelDate, int columnNumberToAddFood) {
-  final List<FoodOption> masterOptions = GoogleSheetsApi.getFoodOptionsByPrefix(["c"]);
+Widget foodList(BuildContext context, String panelDate, int columnNumberToAddFood, List<String> prefix) {
+  final List<FoodOption> masterOptions = GoogleSheetsApi.getFoodOptionsByPrefix(prefix);
+
+  final dynamic carbOrDish;
+  final dynamic carbDishColumnIndices;
+  if (prefix.contains("c")) {
+        carbOrDish = "Carb";
+        carbDishColumnIndices = [3, 6, 9];
+  } else {
+    carbOrDish = "Dish";
+    carbDishColumnIndices = [4, 5, 7, 8, 10, 11];
+  }
+  
   final TextEditingController searchController = TextEditingController();
   
   return Dialog(
@@ -13,7 +25,7 @@ Widget carbList(BuildContext context, String panelDate, int columnNumberToAddFoo
     insetPadding: EdgeInsets.zero,
     child: ConstrainedBox(
       constraints: const BoxConstraints(
-        maxHeight: 450, 
+        maxHeight: 410, 
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -35,16 +47,15 @@ Widget carbList(BuildContext context, String panelDate, int columnNumberToAddFoo
                     .toList();
               }
               
-              // <--- MAIN POPUP --->
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const SizedBox(height: 20),
           
                   // Title
-                  const Text(
-                    "Select Carb",
-                    style: TextStyle(
+                  Text(
+                    "Select $carbOrDish",
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: primaryText,
                       fontWeight: FontWeight.w600,
@@ -53,42 +64,66 @@ Widget carbList(BuildContext context, String panelDate, int columnNumberToAddFoo
           
                   const SizedBox(height: 16),
           
-                  // Step 3: Search bar
+                  //Search bar
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: TextField(
-                      controller: searchController,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        hintText: 'Search..',
-                        hintStyle: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.5),
-                          fontSize: secondaryText,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: searchController,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              hintText: 'Search..',
+                              hintStyle: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.5),
+                                fontSize: secondaryText,
+                              ),
+                              prefixIcon: Icon(Icons.search, color: Colors.white.withValues(alpha: 0.6)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(color: accent),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                              filled: true,
+                              fillColor: Colors.white.withValues(alpha: 0.05),
+                            ),
+                            
+                            // Step 4: Trigger rebuild on text change (filtering is derived from searchController.text)
+                            onChanged: (String query) {
+                              setModalState(() {
+                                // Trigger rebuild - filtering happens automatically above
+                              });
+                            },
+                          ),
                         ),
-                        prefixIcon: Icon(Icons.search, color: Colors.white.withValues(alpha: 0.6)),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+
+                        SizedBox(width: 10),
+
+                        Material(
+                          color: darkGrey,
+                          shape: const CircleBorder(),
+                          child: InkWell(
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              showAddFundsDialog(context);
+                            },
+                            customBorder: const CircleBorder(),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Icon(Icons.add, color: Colors.white60)
+                            ),
+                          ),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: accent),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                        filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.05),
-                      ),
-                      
-                      // Step 4: Trigger rebuild on text change (filtering is derived from searchController.text)
-                      onChanged: (String query) {
-                        setModalState(() {
-                          // Trigger rebuild - filtering happens automatically above
-                        });
-                      },
+                      ],
                     ),
                   ),
           
@@ -162,7 +197,7 @@ Widget carbList(BuildContext context, String panelDate, int columnNumberToAddFoo
                                                   () {
                                                     final days = GoogleSheetsApi.calculateDaysSinceLastEaten(
                                                       panelDate: panelDate,
-                                                      columnIndices: [3, 6, 9],
+                                                      columnIndices: carbDishColumnIndices,
                                                       foodId: food.id,
                                                     );
                                                     if (days == -1) return 'Never eaten';
