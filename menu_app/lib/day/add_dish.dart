@@ -98,7 +98,8 @@ Future<void> showAddFundsDialog(BuildContext context) async {
   void tapEnter() {
     HapticFeedback.lightImpact();
                             
-    if (foodName.text.trim().isEmpty || from.text.trim().isEmpty) {
+    // if (foodName.text.trim().isEmpty || from.text.trim().isEmpty) {
+    if (foodName.text.trim().isEmpty) {
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please fill all required fields")));
     } else {
@@ -110,7 +111,7 @@ Future<void> showAddFundsDialog(BuildContext context) async {
       GoogleSheetsApi.addFoodItem(
         assignedPrefixes,
         foodName.text,
-        "ingredients",
+        "please add this soon",
       );
 
       // clear text fields
