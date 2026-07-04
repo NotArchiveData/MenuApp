@@ -25,8 +25,8 @@ class MealSection extends StatefulWidget {
 
 class _MealSectionState extends State<MealSection> {
 
-  String getFoodNameFromId(String id) {
-    if (id.isEmpty) return "Select Item"; // Fallback hint text
+  String getFoodNameFromId(String id, String ya) {
+    if (id.isEmpty) return ya; // Fallback hint text
     
     // Find matching item in your pre-loaded GoogleSheetsApi.foodItems cache
     final match = GoogleSheetsApi.foodItems.firstWhere(
@@ -77,15 +77,15 @@ class _MealSectionState extends State<MealSection> {
         
         Row(
           children: [
-            Expanded(child: buildButton(foodList, widget.no + 1, ["v", "nv"], getFoodNameFromId(currentDish1Id), rowIndex, dish1Col)),
+            Expanded(child: buildButton(foodList, widget.no + 1, ["v", "nv"], getFoodNameFromId(currentDish1Id, "Dish"), rowIndex, dish1Col)),
             const SizedBox(width: 8),
-            Expanded(child: buildButton(foodList, widget.no + 2, ["v", "nv"], getFoodNameFromId(currentDish2Id), rowIndex, dish2Col)),
+            Expanded(child: buildButton(foodList, widget.no + 2, ["v", "nv"], getFoodNameFromId(currentDish2Id, "Dish"), rowIndex, dish2Col)),
           ],
         ),
 
         const SizedBox(height: 8),
 
-        buildButton(foodList, widget.no, ["c"], getFoodNameFromId(currentCarbId), rowIndex, carbCol),
+        buildButton(foodList, widget.no, ["c"], getFoodNameFromId(currentCarbId, "Carb"), rowIndex, carbCol),
       ],
     );
   }
