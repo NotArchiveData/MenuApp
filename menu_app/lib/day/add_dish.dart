@@ -9,8 +9,9 @@ Future<void> showAddFundsDialog(BuildContext context) async {
   final TextEditingController from = TextEditingController();
 
   List<String> assignedPrefixes = [];
-  List<String> carbs = ["bread", "roti", "rice"];
+  List<String> carbs = ["bread", "roti", "rice", "quinoa", "parantha", "dimsums"];
   List<String> nonveg = ["chicken", "fish", "mutton", "prawn"];
+  List<String> veg = ["paneer", "tofu"];
   int maxNumber = 0;
 
   // focus nodes for text fields to go from one to two
@@ -80,6 +81,10 @@ Future<void> showAddFundsDialog(BuildContext context) async {
         autoFoodPrefixNumber("nv");
         assignedPrefixes.add("nv$maxNumber");
       }
+      if (veg.contains(word) && !assignedPrefixes.contains("v")) {
+        autoFoodPrefixNumber("v");
+        assignedPrefixes.add("v$maxNumber");
+      }
     }
 
     // If it doesn't match anything, give it a default prefix (e.g., "v" for veg / general)
@@ -98,9 +103,9 @@ Future<void> showAddFundsDialog(BuildContext context) async {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please fill all required fields")));
     } else {
 
-      Navigator.of(context).pop();  
+      Navigator.of(context).pop();
       autoFoodPrefixLetter();
-  
+
       // enter food item
       GoogleSheetsApi.addFoodItem(
         assignedPrefixes,

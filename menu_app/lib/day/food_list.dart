@@ -6,8 +6,6 @@ import 'package:menu_app/day/add_dish.dart';
 import 'package:menu_app/gsheets_api.dart';
 
 Widget foodList(BuildContext context, String panelDate, int columnNumberToAddFood, List<String> prefix) {
-  final List<FoodOption> masterOptions = GoogleSheetsApi.getFoodOptionsByPrefix(prefix);
-
   final dynamic carbOrDish;
   final dynamic carbDishColumnIndices;
   if (prefix.contains("c")) {
@@ -37,6 +35,8 @@ Widget foodList(BuildContext context, String panelDate, int columnNumberToAddFoo
           ),
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setModalState) {
+              final List<FoodOption> masterOptions = GoogleSheetsApi.getFoodOptionsByPrefix(prefix);
+
               // Step 2: Derive filteredOptions from the current search query
               List<FoodOption> filteredOptions;
               if (searchController.text.isEmpty) {
@@ -112,9 +112,10 @@ Widget foodList(BuildContext context, String panelDate, int columnNumberToAddFoo
                           color: darkGrey,
                           shape: const CircleBorder(),
                           child: InkWell(
-                            onTap: () {
+                            onTap: () async {
                               HapticFeedback.lightImpact();
-                              showAddFundsDialog(context);
+                              await showAddFundsDialog(context);
+                              setModalState(() {});
                             },
                             customBorder: const CircleBorder(),
                             child: Padding(
