@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:menu_app/constants/colours.dart';
 import 'package:menu_app/constants/common_values.dart';
-import 'package:menu_app/day/carb_list.dart';
+import 'package:menu_app/day/food_list.dart';
 import 'package:menu_app/gsheets_api.dart';
 
 // The shared meal section widget that composes several dropdowns.

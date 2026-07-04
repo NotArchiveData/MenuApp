@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:menu_app/constants/colours.dart';
+import 'package:menu_app/gsheets_api.dart';
 
 Future<void> showAddFundsDialog(BuildContext context) async {
   // stuff to get access to inputs
-  final TextEditingController amount = TextEditingController();
+  final TextEditingController foodName = TextEditingController();
   final TextEditingController from = TextEditingController();
+
+  List<String> assignedPrefixes = [];
+  List<String> carbs = ["bread", "roti", "rice"];
+  List<String> nonveg = ["chicken", "fish", "mutton", "prawn"];
+  int maxNumber = 0;
 
   // focus nodes for text fields to go from one to two
   final FocusNode one = FocusNode();
@@ -27,21 +33,85 @@ Future<void> showAddFundsDialog(BuildContext context) async {
     );
   }
 
+  // as the function name suggests,
+  autoFoodPrefixNumber(String prefix) {
+    maxNumber = 0;
+    // 1. Use your existing API function to get ONLY the foods matching this prefix
+    // e.g., if prefix is "c", this returns only items containing "c01", "c02", etc.
+    final matchedFoods = GoogleSheetsApi.getFoodOptionsByPrefix([prefix]);
+    
+    // 2. Find the highest number among those matching items
+    for (var food in matchedFoods) {
+      // Split the ID string in case it's a joined cell like "c01,nv02"
+      List<String> individualIds = food.id.toLowerCase().split(',');
+
+      for (String id in individualIds) {
+        String cleanId = id.trim();
+        
+        if (cleanId.startsWith(prefix)) {
+          // Strip out the prefix letters to get the pure number string
+          String numericPart = cleanId.substring(prefix.length);
+          int? currentNum = int.tryParse(numericPart);
+          
+          if (currentNum != null && currentNum > maxNumber) {
+            maxNumber = currentNum;
+          }
+        }
+      }
+    }
+
+    // 3. Return the next logical number in the sequence
+    maxNumber += 1;
+  }
+
+  // as the function name suggests,
+  autoFoodPrefixLetter() {
+    String inputDish = foodName.text.toLowerCase(); // "chicken fried rice"
+    // Split by spaces into individual words: ["chicken", "fried", "rice"]
+    List<String> dishWords = inputDish.split(' '); 
+
+    // Check for matches
+    for (String word in dishWords) {
+      if (carbs.contains(word) && !assignedPrefixes.contains("c")) {
+        autoFoodPrefixNumber("c");
+        assignedPrefixes.add("c$maxNumber");
+      }
+      if (nonveg.contains(word) && !assignedPrefixes.contains("nv")) {
+        autoFoodPrefixNumber("nv");
+        assignedPrefixes.add("nv$maxNumber");
+      }
+    }
+
+    // If it doesn't match anything, give it a default prefix (e.g., "v" for veg / general)
+    if (assignedPrefixes.isEmpty) {
+      autoFoodPrefixNumber("v"); 
+      assignedPrefixes.add("v$maxNumber");
+    }
+  }
+
   // things that happen when you tap enter
   void tapEnter() {
     HapticFeedback.lightImpact();
                             
-    if (amount.text.trim().isEmpty || from.text.trim().isEmpty) {
+    if (foodName.text.trim().isEmpty || from.text.trim().isEmpty) {
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please fill all required fields")));
     } else {
 
       Navigator.of(context).pop();  
-      
+      autoFoodPrefixLetter();
+  
+      // enter food item
+      GoogleSheetsApi.addFoodItem(
+        assignedPrefixes,
+        foodName.text,
+        "ingredients",
+      );
 
       // clear text fields
-      amount.clear();
+      foodName.clear();
       from.clear();
+      assignedPrefixes.clear();
     }
   }
 
@@ -55,8 +125,8 @@ Future<void> showAddFundsDialog(BuildContext context) async {
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: Container(
             decoration: BoxDecoration(
-              color: mainBg,
-              border: Border.all(color: fundGreen),
+              color: const Color(0xFF2b2b2b),
+              border: Border.all(color: accent),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
@@ -65,7 +135,7 @@ Future<void> showAddFundsDialog(BuildContext context) async {
                 SizedBox(height: 20),
                     
                 Text(
-                  "Add Funds",
+                  "New Food Item",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -86,13 +156,10 @@ Future<void> showAddFundsDialog(BuildContext context) async {
                       TextFormField(
                         autofocus: true,
                         focusNode: one,
-                        controller: amount,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
+                        controller: foodName,
+                        textCapitalization: TextCapitalization.words,
                         style: TextStyle(color: Colors.white),
-                        decoration: buildInputDecoration("Amount"),
+                        decoration: buildInputDecoration("Name"),
                         onFieldSubmitted: (value) {
                           FocusScope.of(context).requestFocus(two);
                         },
@@ -104,7 +171,7 @@ Future<void> showAddFundsDialog(BuildContext context) async {
                         focusNode: two,
                         controller: from,
                         style: TextStyle(color: Colors.white),
-                        decoration: buildInputDecoration("From"),
+                        decoration: buildInputDecoration("Ingredients"),
                         onFieldSubmitted: (value) {                            
                           tapEnter();
                         },
@@ -129,7 +196,7 @@ Future<void> showAddFundsDialog(BuildContext context) async {
                             HapticFeedback.lightImpact();
                             Navigator.of(context).pop();
                       
-                            amount.clear();
+                            foodName.clear();
                             from.clear();
                           },
                           splashColor: Colors.white12,
@@ -138,7 +205,7 @@ Future<void> showAddFundsDialog(BuildContext context) async {
                             padding: const EdgeInsets.all(14),
                             alignment: Alignment.center,
                             child: const Text(
-                              "Close",
+                              "Cancel",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 15,
@@ -166,7 +233,7 @@ Future<void> showAddFundsDialog(BuildContext context) async {
                             padding: const EdgeInsets.all(14),
                             alignment: Alignment.center,
                             child: const Text(
-                              "Enter",
+                              "Add",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 15,
