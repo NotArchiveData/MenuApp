@@ -31,7 +31,7 @@ class _DayListState extends State<DayList> {
 
     return ClipRRect(
       // the main large rectangle day panel
-      borderRadius: BorderRadius.circular(15),
+      borderRadius: BorderRadius.circular(30),
       child: Container(
         height: widget.height,
         decoration: BoxDecoration(

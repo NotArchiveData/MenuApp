@@ -9,9 +9,8 @@ Future<void> showAddFundsDialog(BuildContext context) async {
   final TextEditingController from = TextEditingController();
 
   List<String> assignedPrefixes = [];
-  List<String> carbs = ["bread", "roti", "rice", "quinoa", "parantha", "dimsums"];
-  List<String> nonveg = ["chicken", "fish", "mutton", "prawn"];
-  List<String> veg = ["paneer", "tofu"];
+  List<String> carbs = ["bread", "roti", "rice", "quinoa", "parantha", "dimsums", "poha", "amaranth", "pulao"];
+  List<String> nonveg = ["chicken", "fish", "mutton", "prawn", "egg", "omelette"];
   int maxNumber = 0;
 
   // focus nodes for text fields to go from one to two
@@ -80,10 +79,6 @@ Future<void> showAddFundsDialog(BuildContext context) async {
       if (nonveg.contains(word) && !assignedPrefixes.contains("nv")) {
         autoFoodPrefixNumber("nv");
         assignedPrefixes.add("nv$maxNumber");
-      }
-      if (veg.contains(word) && !assignedPrefixes.contains("v")) {
-        autoFoodPrefixNumber("v");
-        assignedPrefixes.add("v$maxNumber");
       }
     }
 
