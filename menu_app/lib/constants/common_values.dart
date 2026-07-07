@@ -7,6 +7,7 @@ const double tertiaryPadding = 15;
 const double radius = 15;
 
 // text heights
-const double primaryText = 15;
-const double secondaryText = 12;
-const double tertiaryText = 9;
+const double primaryText = 18;
+const double secondaryText = 15;
+const double tertiaryText = 12;
+const double quaternaryText = 10;

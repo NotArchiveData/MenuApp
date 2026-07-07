@@ -4,8 +4,8 @@ import 'dart:async';
 import 'package:menu_app/gsheets_api.dart';
 import 'package:menu_app/constants/colours.dart';
 import 'package:menu_app/top_bar.dart';
-import 'package:menu_app/constants/common_values.dart';
 import 'package:menu_app/day/day_list.dart';
+import 'package:menu_app/navbar.dart';
 import 'package:menu_app/variables/date.dart' as date;
 
 class LandingPage extends StatefulWidget {
@@ -22,7 +22,10 @@ class _LandingPageState extends State<LandingPage> {
   @override
   void initState() {
     super.initState();
-    pageController = PageController(initialPage: currentPageIndex);
+    pageController = PageController(
+      initialPage: currentPageIndex,
+      viewportFraction: 1.0,
+    );
 
     if (GoogleSheetsApi.loading) {
       _waitForSheetData();
@@ -79,12 +82,12 @@ class _LandingPageState extends State<LandingPage> {
     return Scaffold(
       backgroundColor: mainBg,
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
-            const SizedBox(height: primaryPadding),
+            const SizedBox(height: 50),
             TopBar(),
-            const SizedBox(height: secondaryPadding),
+            const SizedBox(height: 20),
             Expanded(
               child: RefreshIndicator(
                 color: Colors.white,
@@ -94,7 +97,7 @@ class _LandingPageState extends State<LandingPage> {
                     ? const Center(child: CircularProgressIndicator())
                     : LayoutBuilder(
                         builder: (context, constraints) {
-                          final double pageSpacing = 10.0;
+                          const double pageSpacing = 10.0;
                           final double pageHeight = constraints.maxHeight - pageSpacing;
                           final list = GoogleSheetsApi.calendarDates;
                           final int itemCount = list.length;
@@ -102,9 +105,7 @@ class _LandingPageState extends State<LandingPage> {
                           Widget buildPage(int index) {
                             final bool isCurrentPage = index == currentPageIndex;
                             return Padding(
-                              padding: EdgeInsets.only(
-                                bottom: index == itemCount - 1 ? 0 : pageSpacing,
-                              ),
+                              padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
                               child: SizedBox(
                                 height: pageHeight,
                                 child: DayList(
@@ -119,12 +120,16 @@ class _LandingPageState extends State<LandingPage> {
                             
                           return PageView.builder(
                             controller: pageController,
-                            scrollDirection: Axis.vertical,
+                            scrollDirection: Axis.horizontal,
+                            padEnds: false,
+                            physics: const PageScrollPhysics(parent: BouncingScrollPhysics()),
                             itemCount: itemCount,
                             onPageChanged: (index) {
-                              setState(() {
-                                currentPageIndex = index;
-                              });
+                              if (mounted && currentPageIndex != index) {
+                                setState(() {
+                                  currentPageIndex = index;
+                                });
+                              }
                             },
                             itemBuilder: (context, index) {
                               return buildPage(index);
@@ -135,6 +140,12 @@ class _LandingPageState extends State<LandingPage> {
               ),
             ),
           ],
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+          child: const NavBar(),
         ),
       ),
     );

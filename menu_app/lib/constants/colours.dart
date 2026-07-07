@@ -3,6 +3,22 @@ import 'package:flutter/material.dart';
 // using the main bg colour
 final mainBg = Color(0xFFF5E9DD);
 
+// panel background
+final cyanBg = Color(0xFF47716A);
+final lightCyanBg = Color(0xFF568A80);
+
+// text variants
+final blackText = Color(0xFF46413B);
+final whiteText = Color(0xFFF5E9DD);
+
+// food options
+final nonVegCircle = Color(0xFF8F483F);
+final vegCircle = Color(0xFF69915A);
+final carbCircle = Color(0xFFF5E9DD);
+final dessertCircle = Color(0xFFF5E9DD);
+final iconOutline = Color(0xFFF5E9DD);
+
+
 // text
 final text = Color(0xFF46413B);
 

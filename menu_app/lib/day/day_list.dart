@@ -35,25 +35,29 @@ class _DayListState extends State<DayList> {
       child: Container(
         height: widget.height,
         decoration: BoxDecoration(
-          color: isToday ? accent : darkGrey,
+          color: isToday ? cyanBg : darkGrey,
         ),
         child: Column(
           children: [
-            // Top section with day name, date, and divider.
             topBar(),
-
-            // The meals
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(tertiaryPadding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    buildMealSection(3, "Breakfast"),
-                    buildMealSection(6, "Lunch"),
-                    buildMealSection(9, "Dinner"),
-                  ],
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: widget.height - 80,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        buildMealSection(3, ""),
+                        buildMealSection(6, ""),
+                        buildMealSection(9, ""),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -74,45 +78,46 @@ class _DayListState extends State<DayList> {
   // day of week and date and month
   Widget topBar() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      
       children: [
-        const SizedBox(height: tertiaryPadding),
+        const SizedBox(height: 20),
     
-        Text(
-          widget.day,
-          style: TextStyle(
-            color: white,
-            fontSize: primaryText,
-            fontWeight: FontWeight.w600,
-          ),
-          textHeightBehavior: const TextHeightBehavior(
-            applyHeightToFirstAscent: false,
-            applyHeightToLastDescent: false,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          // crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              widget.day,
+              style: TextStyle(
+                color: white,
+                fontSize: secondaryText,
+                fontWeight: FontWeight.w600,
+              ),
+              textHeightBehavior: const TextHeightBehavior(
+                applyHeightToFirstAscent: false,
+                applyHeightToLastDescent: false,
+              ),
+            ),
+
+            const SizedBox(width: 8),
+          
+            Text(
+              dateChange(widget.date),
+              style: TextStyle(
+                color: white,
+                fontSize: quaternaryText,
+                fontWeight: FontWeight.w400,
+              ),
+              textHeightBehavior: const TextHeightBehavior(
+                applyHeightToFirstAscent: false,
+                applyHeightToLastDescent: false,
+              ),
+            ),
+          ],
         ),
 
-        const SizedBox(height: 2),
-        
-        Text(
-          dateChange(widget.date),
-          style: TextStyle(
-            color: white,
-            fontSize: secondaryText,
-            fontWeight: FontWeight.w400,
-          ),
-          textHeightBehavior: const TextHeightBehavior(
-            applyHeightToFirstAscent: false,
-            applyHeightToLastDescent: false,
-          ),
-        ),
-        
-        const SizedBox(height: tertiaryPadding),
-    
-        Container(
-          width: double.infinity,
-          height: 1,
-          color: white,
-        )
+        const SizedBox(height: 20),
+  
       ],
     );
   }
@@ -121,11 +126,9 @@ class _DayListState extends State<DayList> {
 // just to show dd-mmmm instead of yyyy-mm-dd at the top bar of each day
 String dateChange(String inputDate) {
   DateTime parsedDate = DateTime.parse(inputDate);
-  String day = DateFormat('d').format(parsedDate);       
-  String month = DateFormat('MMMM').format(parsedDate); 
+  String day = DateFormat('d').format(parsedDate);
   String suffix;
 
-  // 3. Apply your ordinal suffix logic
   if (day.endsWith('1') && day != '11') {
     suffix = 'st';
   } else if (day.endsWith('2') && day != '12') {
@@ -136,6 +139,6 @@ String dateChange(String inputDate) {
     suffix = 'th';
   }
 
-  return '$day$suffix $month';
+  return '$day$suffix';
 }
 

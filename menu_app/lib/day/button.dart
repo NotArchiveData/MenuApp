@@ -64,28 +64,52 @@ class _MealSectionState extends State<MealSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          widget.title,
-          style: TextStyle(
-            color: white,
-            fontSize: secondaryText,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-
-        const SizedBox(height: 8),
-        
-        Row(
+        Column(
           children: [
-            Expanded(child: buildButton(foodList, widget.no + 1, ["v", "nv"], getFoodNameFromId(currentDish1Id, "Dish"), rowIndex, dish1Col)),
-            const SizedBox(width: 8),
-            Expanded(child: buildButton(foodList, widget.no + 2, ["v", "nv"], getFoodNameFromId(currentDish2Id, "Dish"), rowIndex, dish2Col)),
+            buildButton(
+              foodList,
+              widget.no + 1,
+              ["v", "nv"],
+              getFoodNameFromId(currentDish1Id, "Dish"),
+              rowIndex,
+              dish1Col,
+              index: 0,
+              totalButtons: 4,
+            ),
+            buildButton(
+              foodList,
+              widget.no + 2,
+              ["v", "nv"],
+              getFoodNameFromId(currentDish2Id, "Dish"),
+              rowIndex,
+              dish2Col,
+              index: 1,
+              totalButtons: 4,
+            ),
+            buildButton(
+              foodList,
+              widget.no,
+              ["c"],
+              getFoodNameFromId(currentCarbId, "Carb"),
+              rowIndex,
+              carbCol,
+              index: 2,
+              totalButtons: 4,
+            ),
+            buildButton(
+              foodList,
+              widget.no,
+              ["c"],
+              getFoodNameFromId(currentCarbId, "Carb"),
+              rowIndex,
+              carbCol,
+              index: 3,
+              totalButtons: 4,
+            ),
+
+            const SizedBox(height: 20)
           ],
         ),
-
-        const SizedBox(height: 8),
-
-        buildButton(foodList, widget.no, ["c"], getFoodNameFromId(currentCarbId, "Carb"), rowIndex, carbCol),
       ],
     );
   }
@@ -97,37 +121,99 @@ class _MealSectionState extends State<MealSection> {
     List<String> prefix,
     String displayLabel, 
     int rowIndex, 
-    int colIndex,
-  ) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(  
-        fixedSize: const Size(0, 60), 
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        backgroundColor: white,
-      ),
-      onPressed: () async {
-        HapticFeedback.lightImpact();
-        
-        // 2. 💎 Pass BOTH the required context and your layout's panelDate into your custom builder here:
-        final selectedFood = await showDialog<FoodOption>(
-          context: context,
-          builder: (dialogContext) => builderFunction(dialogContext, widget.panelDate, columnNumberToAddFood, prefix),
-        );
+    int colIndex, {
+    required int index,
+    required int totalButtons,
+  }) {
+    final bool isFirst = index == 0;
+    final bool isLast = index == totalButtons - 1;
+    final BorderRadius borderRadius = BorderRadius.only(
+      topLeft: isFirst ? const Radius.circular(20) : Radius.zero,
+      topRight: isFirst ? const Radius.circular(20) : Radius.zero,
+      bottomLeft: isLast ? const Radius.circular(20) : Radius.zero,
+      bottomRight: isLast ? const Radius.circular(20) : Radius.zero,
+    );
 
-        // 3. Keep the local state cache updated when an item returns
-        if (selectedFood != null && rowIndex != -1) {
-          setState(() {
-            GoogleSheetsApi.calendarDates[rowIndex - 2][colIndex - 1] = selectedFood.id;
-          });
-          
-          // Note: The database write happens inside carb_list.dart onTap, 
-          // so you don't even need to call updateSingleMealSlot here anymore!
-        }
-      },
-      child: Text(
-        displayLabel,
-        style: const TextStyle(fontWeight: FontWeight.w500),
-        textAlign: TextAlign.center,
+    return Padding(
+      padding: EdgeInsets.only(bottom: isLast ? 0 : 2),
+      child: Material(
+        color: lightCyanBg,
+        borderRadius: borderRadius,
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () async {
+            HapticFeedback.lightImpact();
+
+            final selectedFood = await showDialog<FoodOption>(
+              context: context,
+              builder: (dialogContext) => builderFunction(dialogContext, widget.panelDate, columnNumberToAddFood, prefix),
+            );
+
+            if (selectedFood != null && rowIndex != -1) {
+              setState(() {
+                GoogleSheetsApi.calendarDates[rowIndex - 2][colIndex - 1] = selectedFood.id;
+              });
+            }
+          },
+          borderRadius: borderRadius,
+          splashColor: Colors.white12,
+          highlightColor: Colors.white10,
+          child: Container(
+            height: 50,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+              color: lightCyanBg,
+              borderRadius: borderRadius,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      height: 14,
+                      width: 14,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        // Fill red if prefix contains "nv" for non-veg, otherwise green for veg/carb
+                        color: prefix.contains("nv") 
+                            ? nonVegCircle // Soft, muted red matching palette
+                            : vegCircle, // Soft, muted green matching palette
+                        border: Border.all(
+                          color: iconOutline, // Constant light outline
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                                
+                    const SizedBox(width: 20),
+                                
+                    Text(
+                      displayLabel,
+                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: tertiaryText, color: whiteText),
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+            
+                if (displayLabel != "Select Item" && displayLabel != "Dish" && displayLabel != "Carb")
+                  InkWell(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      // TODO: Add your clear/delete cell selection state action here
+                    },
+                    customBorder: const CircleBorder(),
+                    child: const Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Icon(Icons.delete_outline, color: Colors.white60, size: 20)
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

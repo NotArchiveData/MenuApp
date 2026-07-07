@@ -10,55 +10,58 @@ class TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Meal Prep", 
-              style: TextStyle(
-                color: text,
-                fontSize: secondaryText,
-                fontWeight: FontWeight.w400,
-                ),
-            ),
-          
-            Text(
-              date.getDayMonthYear(),
-              style: TextStyle(
-                color: text,
-                fontSize: primaryText,
-                fontWeight: FontWeight.w600,
-                ),
-              textHeightBehavior: TextHeightBehavior(
-                  applyHeightToFirstAscent: false,
-                  applyHeightToLastDescent: false,
-                ),
-            )
-          ],
-        ),
-    
-        // icon to go to spreadsheets
-        Material(
-          color: accent,
-          shape: const CircleBorder(),
-          child: InkWell(
-            onTap: () {
-              HapticFeedback.lightImpact();
-              GoogleSheetsApi.refreshData();
-              //launchUrl(Uri.parse("https://docs.google.com/spreadsheets/d/1pj_bQgIMRJRG4BAiZQ-nqB8xYQIJVGGAFlt0T3IKJYU/edit?usp=sharing"));
-            },
-            customBorder: const CircleBorder(),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              // child: Icon(Icons.exit_to_app, color: Colors.white),
-              child: Icon(Icons.refresh, color: Colors.white)
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Meal Prep", 
+                style: TextStyle(
+                  color: text,
+                  fontSize: quaternaryText,
+                  fontWeight: FontWeight.w400,
+                  ),
+              ),
+            
+              Text(
+                date.getDayMonthYear(),
+                style: TextStyle(
+                  color: text,
+                  fontSize: primaryText,
+                  fontWeight: FontWeight.w600,
+                  ),
+                textHeightBehavior: TextHeightBehavior(
+                    applyHeightToFirstAscent: false,
+                    applyHeightToLastDescent: false,
+                  ),
+              )
+            ],
+          ),
+      
+          // icon to go to spreadsheets
+          Material(
+            color: accent,
+            shape: const CircleBorder(),
+            child: InkWell(
+              onTap: () {
+                HapticFeedback.lightImpact();
+                GoogleSheetsApi.refreshData();
+                //launchUrl(Uri.parse("https://docs.google.com/spreadsheets/d/1pj_bQgIMRJRG4BAiZQ-nqB8xYQIJVGGAFlt0T3IKJYU/edit?usp=sharing"));
+              },
+              customBorder: const CircleBorder(),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                // child: Icon(Icons.exit_to_app, color: Colors.white),
+                child: Icon(Icons.refresh, color: Colors.white)
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
