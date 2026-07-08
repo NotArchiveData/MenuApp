@@ -6,36 +6,43 @@ import 'package:menu_app/day/button.dart';
 import 'package:menu_app/variables/date.dart';
 
 // <--- main DayList class. The stuff for the entire panel ---> 
-class DayList extends StatefulWidget {
+class DayList extends StatelessWidget {
   final String date;
   final String day;
-  final bool isCurrentPage;
   final double height;
 
   const DayList({
     super.key,
     required this.date,
     required this.day,
-    required this.isCurrentPage,
     required this.height,
   });
 
   @override
-  State<DayList> createState() => _DayListState();
-}
-
-class _DayListState extends State<DayList> {
-  @override
   Widget build(BuildContext context) {
-    final bool isToday = widget.date == getDate();
+    final bool isToday = date == getDate();
+    final DateTime panelDate = DateTime.parse(date);
+    final DateTime currentToday = DateTime.parse(getDate());
+
+    final Color panelColour = panelDate.isBefore(currentToday) && !isToday
+        ? pastBg
+        : panelDate.isAfter(currentToday) && !isToday
+            ? futureBg
+            : cyanBg;
+
+    final Color buttonColour = panelDate.isBefore(currentToday) && !isToday
+        ? pastLightBg
+        : panelDate.isAfter(currentToday) && !isToday
+            ? futureLightBg
+            : lightCyanBg;
 
     return ClipRRect(
       // the main large rectangle day panel
       borderRadius: BorderRadius.circular(30),
       child: Container(
-        height: widget.height,
+        height: height,
         decoration: BoxDecoration(
-          color: isToday ? cyanBg : darkGrey,
+          color: panelColour,
         ),
         child: Column(
           children: [
@@ -47,24 +54,18 @@ class _DayListState extends State<DayList> {
                   physics: const BouncingScrollPhysics(),
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
-                      minHeight: widget.height - 80,
+                      minHeight: height - 80,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        buildMealSection(3, "", 1),
-
+                        buildMealSection(3, "", 1, buttonColour),
                         const SizedBox(height: 20),
-
-                        buildMealSection(4, "", 4),
-
+                        buildMealSection(4, "", 4, buttonColour),
                         const SizedBox(height: 20),
-
-                        buildMealSection(8, "", 4),
-
+                        buildMealSection(8, "", 4, buttonColour),
                         const SizedBox(height: 20),
-                        
-                        buildMealSection(12, "", 4),
+                        buildMealSection(12, "", 4, buttonColour),
                       ],
                     ),
                   ),
@@ -77,28 +78,26 @@ class _DayListState extends State<DayList> {
     );
   }
 
-  buildMealSection(int no, String mealTitle, int numberOfButtons) {
+  Widget buildMealSection(int no, String mealTitle, int numberOfButtons, Color buttonColour) {
     return MealSection(
       no: no,
       title: mealTitle,
-      panelDate: widget.date,
+      panelDate: date,
       numberOfButtons: numberOfButtons,
+      buttonColour: buttonColour,
     );
   }
 
   // day of week and date and month
   Widget topBar() {
     return Column(
-      
       children: [
         const SizedBox(height: 20),
-    
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          // crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              widget.day,
+              day,
               style: TextStyle(
                 color: white,
                 fontSize: secondaryText,
@@ -111,9 +110,8 @@ class _DayListState extends State<DayList> {
             ),
 
             const SizedBox(width: 8),
-          
             Text(
-              dateChange(widget.date),
+              dateChange(date),
               style: TextStyle(
                 color: white,
                 fontSize: quaternaryText,

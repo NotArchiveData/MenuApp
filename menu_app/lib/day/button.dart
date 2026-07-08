@@ -12,6 +12,7 @@ class MealSection extends StatefulWidget {
   // couldnt name anything better but this is for the column number in the spreadsheet
   final int no;
   final int numberOfButtons;
+  final Color buttonColour;
 
   const MealSection({
     super.key,
@@ -19,6 +20,7 @@ class MealSection extends StatefulWidget {
     required this.panelDate,
     required this.no,
     required this.numberOfButtons,
+    required this.buttonColour,
   });
 
   @override
@@ -191,7 +193,7 @@ class _MealSectionState extends State<MealSection> {
     return Padding(
       padding: EdgeInsets.only(bottom: isLast ? 0 : 2),
       child: Material(
-        color: lightCyanBg,
+        color: widget.buttonColour,
         borderRadius: borderRadius,
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -216,7 +218,7 @@ class _MealSectionState extends State<MealSection> {
             height: 50,
             padding: const EdgeInsets.symmetric(horizontal: 10),
             decoration: BoxDecoration(
-              color: lightCyanBg,
+              color: widget.buttonColour,
               borderRadius: borderRadius,
             ),
             child: Padding(

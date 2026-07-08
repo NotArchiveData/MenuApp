@@ -16,14 +16,13 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
-  int currentPageIndex = 0;
   late final PageController pageController;
 
   @override
   void initState() {
     super.initState();
     pageController = PageController(
-      initialPage: currentPageIndex,
+      initialPage: 0,
       viewportFraction: 1.0,
     );
 
@@ -54,13 +53,9 @@ class _LandingPageState extends State<LandingPage> {
   void _jumpToToday() {
     final todayDate = date.getDate();
     final list = GoogleSheetsApi.calendarDates;
-
     final int todayIndex = list.indexWhere((row) => row[0] == todayDate);
 
-    if (todayIndex != -1) {
-      setState(() {
-        currentPageIndex = todayIndex;
-      });
+    if (todayIndex != -1 && mounted) {
       pageController.jumpToPage(todayIndex);
     }
   }
@@ -103,7 +98,6 @@ class _LandingPageState extends State<LandingPage> {
                           final int itemCount = list.length;
                             
                           Widget buildPage(int index) {
-                            final bool isCurrentPage = index == currentPageIndex;
                             return Padding(
                               padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
                               child: SizedBox(
@@ -111,7 +105,6 @@ class _LandingPageState extends State<LandingPage> {
                                 child: DayList(
                                   date: list[index][0],
                                   day: list[index][1],
-                                  isCurrentPage: isCurrentPage,
                                   height: pageHeight,
                                 ),
                               ),
@@ -124,13 +117,6 @@ class _LandingPageState extends State<LandingPage> {
                             padEnds: false,
                             physics: const PageScrollPhysics(parent: BouncingScrollPhysics()),
                             itemCount: itemCount,
-                            onPageChanged: (index) {
-                              if (mounted && currentPageIndex != index) {
-                                setState(() {
-                                  currentPageIndex = index;
-                                });
-                              }
-                            },
                             itemBuilder: (context, index) {
                               return buildPage(index);
                             },

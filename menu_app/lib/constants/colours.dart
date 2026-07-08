@@ -4,8 +4,14 @@ import 'package:flutter/material.dart';
 final mainBg = Color(0xFFF5E9DD);
 
 // panel background
+final pastBg = Color(0xFF2F4B46); 
+final pastLightBg = Color(0xFF3F645C);
+
 final cyanBg = Color(0xFF47716A);
 final lightCyanBg = Color(0xFF568A80);
+
+final futureBg = Color(0xFF5E978D);
+final futureLightBg = Color(0xFF75A99D);
 
 // text variants
 final blackText = Color(0xFF46413B);

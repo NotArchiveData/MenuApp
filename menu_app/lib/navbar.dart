@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:menu_app/constants/colours.dart';
-import 'package:menu_app/constants/common_values.dart';
 
 class NavBar extends StatelessWidget {
   const NavBar({super.key});
@@ -19,17 +18,19 @@ class NavBar extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
           children: [
-            InkWell(
-              onTap: () {
-                HapticFeedback.lightImpact();
-              },
-              customBorder: const CircleBorder(),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                // child: Icon(Icons.exit_to_app, color: Colors.white),
-                child: Icon(Icons.refresh, color: Colors.white)
-              ),
-            ),
+            // Text("Ingredients Coming Soon"),
+
+            // InkWell(
+            //   onTap: () {
+            //     HapticFeedback.lightImpact();
+            //   },
+            //   customBorder: const CircleBorder(),
+            //   child: Padding(
+            //     padding: const EdgeInsets.all(10.0),
+            //     // child: Icon(Icons.exit_to_app, color: Colors.white),
+            //     child: Icon(Icons.refresh, color: Colors.white)
+            //   ),
+            // ),
           ],
         ),
       ),
