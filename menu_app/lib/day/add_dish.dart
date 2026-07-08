@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:menu_app/constants/colours.dart';
 import 'package:menu_app/gsheets_api.dart';
 
-Future<void> showAddFundsDialog(BuildContext context) async {
+Future<void> showAddDishDialog(BuildContext context) async {
   // stuff to get access to inputs
   final TextEditingController foodName = TextEditingController();
   final TextEditingController from = TextEditingController();
@@ -11,6 +11,9 @@ Future<void> showAddFundsDialog(BuildContext context) async {
   List<String> assignedPrefixes = [];
   List<String> carbs = ["bread", "roti", "rice", "quinoa", "parantha", "dimsums", "poha", "amaranth", "pulao"];
   List<String> nonveg = ["chicken", "fish", "mutton", "prawn", "egg", "omelette"];
+  List<String> drinks = ["smoothie", "drink", "juice"];
+  List<String> sweets = ["ice cream", "cream", "ice"];
+  List<String> fruit = ["watermelon", "mango", "blueberry", "pear", "apple", "custard apple", "banana"];
   int maxNumber = 0;
 
   // focus nodes for text fields to go from one to two
@@ -79,6 +82,18 @@ Future<void> showAddFundsDialog(BuildContext context) async {
       if (nonveg.contains(word) && !assignedPrefixes.contains("nv")) {
         autoFoodPrefixNumber("nv");
         assignedPrefixes.add("nv$maxNumber");
+      }
+      if (drinks.contains(word) && !assignedPrefixes.contains("d")) {
+        autoFoodPrefixNumber("d");
+        assignedPrefixes.add("d$maxNumber");
+      }
+      if (sweets.contains(word) && !assignedPrefixes.contains("s")) {
+        autoFoodPrefixNumber("s");
+        assignedPrefixes.add("s$maxNumber");
+      }
+      if (fruit.contains(word) && !assignedPrefixes.contains("f")) {
+        autoFoodPrefixNumber("f");
+        assignedPrefixes.add("f$maxNumber");
       }
     }
 

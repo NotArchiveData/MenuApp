@@ -52,9 +52,19 @@ class _DayListState extends State<DayList> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        buildMealSection(3, ""),
-                        buildMealSection(6, ""),
-                        buildMealSection(9, ""),
+                        buildMealSection(3, "", 1),
+
+                        const SizedBox(height: 20),
+
+                        buildMealSection(4, "", 4),
+
+                        const SizedBox(height: 20),
+
+                        buildMealSection(8, "", 4),
+
+                        const SizedBox(height: 20),
+                        
+                        buildMealSection(12, "", 4),
                       ],
                     ),
                   ),
@@ -67,11 +77,12 @@ class _DayListState extends State<DayList> {
     );
   }
 
-  buildMealSection(int no, String mealTitle) {
+  buildMealSection(int no, String mealTitle, int numberOfButtons) {
     return MealSection(
       no: no,
       title: mealTitle,
       panelDate: widget.date,
+      numberOfButtons: numberOfButtons,
     );
   }
 

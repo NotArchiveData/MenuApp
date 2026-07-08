@@ -12,10 +12,13 @@ final blackText = Color(0xFF46413B);
 final whiteText = Color(0xFFF5E9DD);
 
 // food options
-final nonVegCircle = Color(0xFF8F483F);
+final nonVegCircle = Color(0xFF822418);
 final vegCircle = Color(0xFF69915A);
-final carbCircle = Color(0xFFF5E9DD);
-final dessertCircle = Color(0xFFF5E9DD);
+final carbCircle = Color(0xFFDCD6A2);
+final sweetsCircle = Color(0xFF869ECA);
+final drinkCircle = Color(0xFF7E4F8F);
+final fruitCircle = Color(0xFFB07119);
+final whiteCircle = Color(0xFFF5E9DD);
 final iconOutline = Color(0xFFF5E9DD);
 
 

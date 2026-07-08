@@ -11,12 +11,14 @@ class MealSection extends StatefulWidget {
   final String panelDate;
   // couldnt name anything better but this is for the column number in the spreadsheet
   final int no;
+  final int numberOfButtons;
 
   const MealSection({
     super.key,
     required this.title,
     required this.panelDate,
     required this.no,
+    required this.numberOfButtons,
   });
 
   @override
@@ -25,8 +27,8 @@ class MealSection extends StatefulWidget {
 
 class _MealSectionState extends State<MealSection> {
 
-  String getFoodNameFromId(String id, String ya) {
-    if (id.isEmpty) return ya; // Fallback hint text
+  String getFoodNameFromId(String id) {
+    if (id.isEmpty) return "Select Dish"; // Fallback hint text
     
     // Find matching item in your pre-loaded GoogleSheetsApi.foodItems cache
     final match = GoogleSheetsApi.foodItems.firstWhere(
@@ -38,39 +40,73 @@ class _MealSectionState extends State<MealSection> {
     return match.length > 1 ? match[1].trim() : id;
   }
 
+  String getPrefixFromId(String id) {
+    final cleaned = id.trim().toLowerCase();
+    if (cleaned.isEmpty) return '';
+    final firstSegment = cleaned.split(',').first.trim();
+    final match = RegExp(r'^[a-z]+').firstMatch(firstSegment);
+    return match?.group(0) ?? '';
+  }
+
+  Color getCircleColorFromId(String id) {
+    if (id.isEmpty) return whiteCircle.withValues(alpha: 0.5);
+    switch (getPrefixFromId(id)) {
+      case 'c':
+        return carbCircle;
+      case 'd':
+        return drinkCircle;
+      case 'nv':
+        return nonVegCircle;
+      case 's':
+        return sweetsCircle;
+      case 'f':
+        return fruitCircle;
+      case 'v':
+      default:
+        return vegCircle;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // 1. Locate the correct row for this panel's date
     final int rowIndex = GoogleSheetsApi.findRowIndexByDate(widget.panelDate);
 
     // 2. Resolve the targeted column numbers
-    final int carbCol = widget.no;
-    final int dish1Col = widget.no + 1;
-    final int dish2Col = widget.no + 2;
+    final int drinkCol = widget.no;
+    final int dish1Col = widget.no;
+    final int dish2Col = widget.no + 1;
+    final int dish3Col = widget.no + 2;
+    final int dish4Col = widget.no + 3;
 
     // 3. Extract the active food IDs currently cached in memory
     // Note: account for 0-based list indexing vs 1-based sheet columns (subtract 1)
-    String currentCarbId = "";
+    String currentDrinkId = "";
     String currentDish1Id = "";
     String currentDish2Id = "";
+    String currentDish3Id = "";
+    String currentDish4Id = "";
 
     if (rowIndex != -1 && (rowIndex - 2) < GoogleSheetsApi.calendarDates.length) {
       final rowData = GoogleSheetsApi.calendarDates[rowIndex - 2];
-      if (rowData.length >= carbCol) currentCarbId = rowData[carbCol - 1];
+      if (rowData.length >= drinkCol) currentDrinkId = rowData[drinkCol - 1];
       if (rowData.length >= dish1Col) currentDish1Id = rowData[dish1Col - 1];
       if (rowData.length >= dish2Col) currentDish2Id = rowData[dish2Col - 1];
+      if (rowData.length >= dish3Col) currentDish3Id = rowData[dish3Col - 1];
+      if (rowData.length >= dish4Col) currentDish4Id = rowData[dish4Col - 1];
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Column(
+        if (widget.numberOfButtons == 4) Column(
           children: [
             buildButton(
               foodList,
-              widget.no + 1,
+              widget.no,
               ["v", "nv"],
-              getFoodNameFromId(currentDish1Id, "Dish"),
+              currentDish1Id,
+              getFoodNameFromId(currentDish1Id),
               rowIndex,
               dish1Col,
               index: 0,
@@ -78,9 +114,10 @@ class _MealSectionState extends State<MealSection> {
             ),
             buildButton(
               foodList,
-              widget.no + 2,
+              widget.no + 1,
               ["v", "nv"],
-              getFoodNameFromId(currentDish2Id, "Dish"),
+              currentDish2Id,
+              getFoodNameFromId(currentDish2Id),
               rowIndex,
               dish2Col,
               index: 1,
@@ -88,26 +125,42 @@ class _MealSectionState extends State<MealSection> {
             ),
             buildButton(
               foodList,
-              widget.no,
+              widget.no + 2,
               ["c"],
-              getFoodNameFromId(currentCarbId, "Carb"),
+              currentDish3Id,
+              getFoodNameFromId(currentDish3Id),
               rowIndex,
-              carbCol,
+              dish3Col,
               index: 2,
               totalButtons: 4,
             ),
             buildButton(
               foodList,
-              widget.no,
-              ["c"],
-              getFoodNameFromId(currentCarbId, "Carb"),
+              widget.no + 3,
+              ["v", "nv"],
+              currentDish4Id,
+              getFoodNameFromId(currentDish4Id),
               rowIndex,
-              carbCol,
+              dish4Col,
               index: 3,
               totalButtons: 4,
             ),
+          ],
+        ),
 
-            const SizedBox(height: 20)
+        if (widget.numberOfButtons == 1) Column(
+          children: [
+            buildButton(
+              foodList,
+              widget.no,
+              ["d"],
+              currentDrinkId,
+              getFoodNameFromId(currentDrinkId),
+              rowIndex,
+              drinkCol,
+              index: 0,
+              totalButtons: 1,
+            ),
           ],
         ),
       ],
@@ -119,6 +172,7 @@ class _MealSectionState extends State<MealSection> {
     Widget Function(BuildContext, String, int, List<String>) builderFunction, 
     int columnNumberToAddFood,
     List<String> prefix,
+    String foodId,
     String displayLabel, 
     int rowIndex, 
     int colIndex, {
@@ -165,52 +219,70 @@ class _MealSectionState extends State<MealSection> {
               color: lightCyanBg,
               borderRadius: borderRadius,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      height: 14,
-                      width: 14,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        // Fill red if prefix contains "nv" for non-veg, otherwise green for veg/carb
-                        color: prefix.contains("nv") 
-                            ? nonVegCircle // Soft, muted red matching palette
-                            : vegCircle, // Soft, muted green matching palette
-                        border: Border.all(
-                          color: iconOutline, // Constant light outline
-                          width: 1,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        height: 14,
+                        width: 14,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: getCircleColorFromId(foodId),
+                          border: Border.all(
+                            color: iconOutline, // Constant light outline
+                            width: 1,
+                          ),
                         ),
                       ),
-                    ),
-                                
-                    const SizedBox(width: 20),
-                                
-                    Text(
-                      displayLabel,
-                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: tertiaryText, color: whiteText),
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-            
-                if (displayLabel != "Select Item" && displayLabel != "Dish" && displayLabel != "Carb")
-                  InkWell(
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      // TODO: Add your clear/delete cell selection state action here
-                    },
-                    customBorder: const CircleBorder(),
-                    child: const Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Icon(Icons.delete_outline, color: Colors.white60, size: 20)
-                    ),
+                                  
+                      const SizedBox(width: 12),
+                                  
+                      Text(
+                        displayLabel,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: tertiaryText, 
+                          color: displayLabel == "Select Dish" ? whiteText.withValues(alpha: 0.5) : whiteText,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
-              ],
+              
+                  // delete item
+                  if (displayLabel != "Select Dish")
+                    InkWell(
+                      onTap: () async {
+                        HapticFeedback.lightImpact();
+                        if (rowIndex != -1) {
+                          setState(() {
+                            GoogleSheetsApi.calendarDates[rowIndex - 2][colIndex - 1] = ""; 
+                          });
+              
+                          try {
+                            // 2. Clear the exact cell directly in your Google Sheet in the background
+                            await GoogleSheetsApi.updateSingleMealSlot(
+                              rowIndex: rowIndex,
+                              columnIndex: columnNumberToAddFood, // e.g., 3 for Breakfast-Carb, 4 for Breakfast-Dish
+                              foodId: "", // Passing an empty string clears the cell content
+                            );
+                          } catch (e) {
+                            print("Error clearing spreadsheet cell: $e");
+                            // Optional: Handle rollback if the network call fails completely
+                          }
+                        }
+                      },
+                      customBorder: const CircleBorder(),
+                      child: Icon(Icons.delete_outline, color: Colors.white60, size: 20),
+                    ),
+                ],
+              ),
             ),
           ),
         ),

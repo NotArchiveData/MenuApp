@@ -10,10 +10,13 @@ Widget foodList(BuildContext context, String panelDate, int columnNumberToAddFoo
   final dynamic carbDishColumnIndices;
   if (prefix.contains("c")) {
         carbOrDish = "Carb";
-        carbDishColumnIndices = [3, 6, 9];
+        carbDishColumnIndices = [6, 10, 14];
+  } else if (prefix.contains("d")) {
+        carbOrDish = "Drink";
+        carbDishColumnIndices = [3];
   } else {
     carbOrDish = "Dish";
-    carbDishColumnIndices = [4, 5, 7, 8, 10, 11];
+    carbDishColumnIndices = [4, 5, 7, 8, 9, 11, 12, 13, 15];
   }
   
   final TextEditingController searchController = TextEditingController();
@@ -36,17 +39,11 @@ Widget foodList(BuildContext context, String panelDate, int columnNumberToAddFoo
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setModalState) {
               final List<FoodOption> masterOptions = GoogleSheetsApi.getFoodOptionsByPrefix(prefix);
+              final String query = searchController.text.toLowerCase();
+              final List<FoodOption> filteredOptions = query.isEmpty
+                  ? masterOptions
+                  : masterOptions.where((food) => food.name.toLowerCase().contains(query)).toList();
 
-              // Step 2: Derive filteredOptions from the current search query
-              List<FoodOption> filteredOptions;
-              if (searchController.text.isEmpty) {
-                filteredOptions = masterOptions;
-              } else {
-                filteredOptions = masterOptions
-                    .where((food) => food.name.toLowerCase().contains(searchController.text.toLowerCase()))
-                    .toList();
-              }
-              
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -114,7 +111,7 @@ Widget foodList(BuildContext context, String panelDate, int columnNumberToAddFoo
                           child: InkWell(
                             onTap: () async {
                               HapticFeedback.lightImpact();
-                              await showAddFundsDialog(context);
+                              await showAddDishDialog(context);
                               setModalState(() {});
                             },
                             customBorder: const CircleBorder(),
@@ -139,60 +136,68 @@ Widget foodList(BuildContext context, String panelDate, int columnNumberToAddFoo
                               padding: EdgeInsets.symmetric(vertical: 20),
                               child: Text("No foods", style: TextStyle(color: Colors.white70)),
                             )
-                          : SingleChildScrollView(
-                              physics: const BouncingScrollPhysics(), // 💎 Smooth, adaptive iOS/Android bounce scrolling
-                              child: Column(
-                                children: filteredOptions.map((food) {
-                                  return Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(12),
-                                      onTap: () async {
-                                        HapticFeedback.lightImpact();
-                                        Navigator.of(context).pop(food); // Close dialog and get selected food option
+                          : ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: filteredOptions.length,
+                              shrinkWrap: true,
+                              padding: EdgeInsets.zero,
+                              itemBuilder: (BuildContext listContext, int index) {
+                                final food = filteredOptions[index];
+                                return Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(12),
+                                    onTap: () async {
+                                      HapticFeedback.lightImpact();
+                                      Navigator.of(context).pop(food); // Close dialog and get selected food option
 
-                                        // 1. Instantly pinpoint the row index for THIS specific panel's calendar date
-                                        int targetRowIndex = GoogleSheetsApi.findRowIndexByDate(panelDate);
+                                      // 1. Instantly pinpoint the row index for THIS specific panel's calendar date
+                                      int targetRowIndex = GoogleSheetsApi.findRowIndexByDate(panelDate);
 
-                                        if (targetRowIndex != -1) {
-                                          // 2. Overwrite the exact cell directly without complex string manipulations!
-                                          await GoogleSheetsApi.updateSingleMealSlot(
-                                            rowIndex: targetRowIndex,
-                                            columnIndex: columnNumberToAddFood, // e.g., 3 for Breakfast-Carb, 6 for Lunch-Carb
-                                            foodId: food.id,
-                                          );
-                                        } else {
-                                          print("Could not find a row match for date: $panelDate");
-                                        }
-                                      },
-                                      splashColor: Colors.white12,
-                                      highlightColor: Colors.white10,
-                                      child: Container(
-                                        width: double.infinity,
-                                        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-                                        margin: const EdgeInsets.only(bottom: 8),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withValues(alpha: 0.05),
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              height: 10,
-                                              width: 10,
-                                              decoration: BoxDecoration(
-                                                color: Colors.white.withValues(alpha: 0.05),
-                                                borderRadius: BorderRadius.circular(12),
-                                              ),
+                                      if (targetRowIndex != -1) {
+                                        // 2. Overwrite the exact cell directly without complex string manipulations!
+                                        await GoogleSheetsApi.updateSingleMealSlot(
+                                          rowIndex: targetRowIndex,
+                                          columnIndex: columnNumberToAddFood, // e.g., 3 for Breakfast-Carb, 6 for Lunch-Carb
+                                          foodId: food.id,
+                                        );
+                                      } else {
+                                        print("Could not find a row match for date: $panelDate");
+                                      }
+                                    },
+                                    splashColor: Colors.white12,
+                                    highlightColor: Colors.white10,
+                                    child: Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                                      margin: const EdgeInsets.only(bottom: 8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(alpha: 0.05),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            height: 10,
+                                            width: 10,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white.withValues(alpha: 0.05),
+                                              borderRadius: BorderRadius.circular(12),
                                             ),
-                                            Column(
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 Text(
                                                   food.name,
                                                   style: const TextStyle(color: Colors.white, fontSize: 15),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
                                                 ),
+                                                const SizedBox(height: 4),
                                                 Text(
                                                   // Compute last-eaten when rendering the list for this dialog
                                                   () {
@@ -209,13 +214,13 @@ Widget foodList(BuildContext context, String panelDate, int columnNumberToAddFoo
                                                 ),
                                               ],
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  );
-                                }).toList(),
-                              ),
+                                  ),
+                                );
+                              },
                             ),
                     ),
                   ),
