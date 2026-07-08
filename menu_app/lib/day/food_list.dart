@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:menu_app/constants/colours.dart';
 import 'package:menu_app/constants/common_values.dart';
 import 'package:menu_app/day/add_dish.dart';
@@ -136,92 +137,131 @@ Widget foodList(BuildContext context, String panelDate, int columnNumberToAddFoo
                               padding: EdgeInsets.symmetric(vertical: 20),
                               child: Text("No foods", style: TextStyle(color: Colors.white70)),
                             )
-                          : ListView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: filteredOptions.length,
-                              shrinkWrap: true,
-                              padding: EdgeInsets.zero,
-                              itemBuilder: (BuildContext listContext, int index) {
-                                final food = filteredOptions[index];
-                                return Material(
-                                  color: Colors.transparent,
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(12),
-                                    onTap: () async {
-                                      HapticFeedback.lightImpact();
-                                      Navigator.of(context).pop(food); // Close dialog and get selected food option
-
-                                      // 1. Instantly pinpoint the row index for THIS specific panel's calendar date
-                                      int targetRowIndex = GoogleSheetsApi.findRowIndexByDate(panelDate);
-
-                                      if (targetRowIndex != -1) {
-                                        // 2. Overwrite the exact cell directly without complex string manipulations!
-                                        await GoogleSheetsApi.updateSingleMealSlot(
-                                          rowIndex: targetRowIndex,
-                                          columnIndex: columnNumberToAddFood, // e.g., 3 for Breakfast-Carb, 6 for Lunch-Carb
-                                          foodId: food.id,
-                                        );
-                                      } else {
-                                        print("Could not find a row match for date: $panelDate");
-                                      }
-                                    },
-                                    splashColor: Colors.white12,
-                                    highlightColor: Colors.white10,
-                                    child: Container(
-                                      width: double.infinity,
-                                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-                                      margin: const EdgeInsets.only(bottom: 8),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white.withValues(alpha: 0.05),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            height: 10,
-                                            width: 10,
+                          : Container(
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20), 
+                            ),
+                            child: ListView.separated(
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: filteredOptions.length,
+                                shrinkWrap: true,
+                                padding: EdgeInsets.zero,
+                                separatorBuilder: (BuildContext context, int index) {
+                                  return const SizedBox(height: 5); 
+                                },
+                                itemBuilder: (BuildContext listContext, int index) {
+                                  final food = filteredOptions[index];
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        onTap: () async {
+                                          HapticFeedback.lightImpact();
+                                          Navigator.of(context).pop(food); // Close dialog and get selected food option
+                                                        
+                                          // 1. Instantly pinpoint the row index for THIS specific panel's calendar date
+                                          int targetRowIndex = GoogleSheetsApi.findRowIndexByDate(panelDate);
+                                                        
+                                          if (targetRowIndex != -1) {
+                                            // 2. Overwrite the exact cell directly without complex string manipulations!
+                                            await GoogleSheetsApi.updateSingleMealSlot(
+                                              rowIndex: targetRowIndex,
+                                              columnIndex: columnNumberToAddFood, // e.g., 3 for Breakfast-Carb, 6 for Lunch-Carb
+                                              foodId: food.id,
+                                            );
+                                          } else {
+                                            print("Could not find a row match for date: $panelDate");
+                                          }
+                                        },
+                                        splashColor: Colors.white12,
+                                        highlightColor: Colors.white10,
+                                        child: Slidable(
+                                                // extra info
+                                                startActionPane: ActionPane(
+                                                  motion: StretchMotion(), 
+                                                  children: [
+                                                    SlidableAction(
+                                                      onPressed: ((context) {
+                                                        HapticFeedback.lightImpact();
+                                                      }),
+                                                      icon: Icons.info_outline,
+                                                      backgroundColor: fadedGrey,
+                                                    ),
+                                                  ],
+                                                ),
+                                                                        
+                                                // delete
+                                                endActionPane: ActionPane(
+                                                  motion: StretchMotion(), 
+                                                  children: [
+                                                    SlidableAction(
+                                                      onPressed: ((context) {
+                                                        HapticFeedback.lightImpact();
+                                                      }),
+                                                      icon: Icons.delete,
+                                                      backgroundColor: expRed,
+                                                    ),
+                                                  ],
+                                                ),
+                                          child: Container(
+                                            width: double.infinity,
+                                            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                                            // margin: const EdgeInsets.only(bottom: 8),
                                             decoration: BoxDecoration(
                                               color: Colors.white.withValues(alpha: 0.05),
-                                              borderRadius: BorderRadius.circular(12),
                                             ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              mainAxisSize: MainAxisSize.min,
+                                            child: Row(
                                               children: [
-                                                Text(
-                                                  food.name,
-                                                  style: const TextStyle(color: Colors.white, fontSize: 15),
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
+                                                Container(
+                                                  height: 10,
+                                                  width: 10,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white.withValues(alpha: 0.05),
+                                                    borderRadius: BorderRadius.circular(20),
+                                                  ),
                                                 ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  // Compute last-eaten when rendering the list for this dialog
-                                                  () {
-                                                    final days = GoogleSheetsApi.calculateDaysSinceLastEaten(
-                                                      panelDate: panelDate,
-                                                      columnIndices: carbDishColumnIndices,
-                                                      foodId: food.id,
-                                                    );
-                                                    if (days == -1) return 'Never eaten';
-                                                    if (days == 1) return 'Ate yesterday';
-                                                    return 'Ate $days days ago';
-                                                  }(),
-                                                  style: TextStyle(color: fadedGrey, fontSize: 12),
+                                                const SizedBox(width: 10),
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Text(
+                                                        food.name,
+                                                        style: const TextStyle(color: Colors.white, fontSize: 15),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                      ),
+                                                      const SizedBox(height: 4),
+                                                      Text(
+                                                        // Compute last-eaten when rendering the list for this dialog
+                                                        () {
+                                                          final days = GoogleSheetsApi.calculateDaysSinceLastEaten(
+                                                            panelDate: panelDate,
+                                                            columnIndices: carbDishColumnIndices,
+                                                            foodId: food.id,
+                                                          );
+                                                          if (days == -1) return 'Never eaten';
+                                                          if (days == 1) return 'Ate yesterday';
+                                                          return 'Ate $days days ago';
+                                                        }(),
+                                                        style: TextStyle(color: fadedGrey, fontSize: 12),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ],
                                             ),
                                           ),
-                                        ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
+                                  );
+                                },
+                              ),
+                          ),
                     ),
                   ),
                   const SizedBox(height: 20),

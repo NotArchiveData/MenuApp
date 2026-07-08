@@ -11,7 +11,7 @@ Future<void> showAddDishDialog(BuildContext context) async {
   List<String> assignedPrefixes = [];
   List<String> carbs = ["bread", "roti", "rice", "quinoa", "parantha", "dimsums", "poha", "amaranth", "pulao"];
   List<String> nonveg = ["chicken", "fish", "mutton", "prawn", "egg", "omelette"];
-  List<String> drinks = ["smoothie", "drink", "juice"];
+  List<String> drinks = ["smoothie", "drink", "juice", "water", "lassi"];
   List<String> sweets = ["ice cream", "cream", "ice"];
   List<String> fruit = ["watermelon", "mango", "blueberry", "pear", "apple", "custard apple", "banana"];
   int maxNumber = 0;
@@ -73,25 +73,30 @@ Future<void> showAddDishDialog(BuildContext context) async {
     // Split by spaces into individual words: ["chicken", "fried", "rice"]
     List<String> dishWords = inputDish.split(' '); 
 
+    // Helper function to check if any keyword in a category matches a word
+    bool matchesCategory(List<String> categoryList, String word) {
+      return categoryList.any((keyword) => word.contains(keyword));
+    }
+
     // Check for matches
     for (String word in dishWords) {
-      if (carbs.contains(word) && !assignedPrefixes.contains("c")) {
+      if (matchesCategory(carbs, word) && !assignedPrefixes.any((p) => p.startsWith("c"))) {
         autoFoodPrefixNumber("c");
         assignedPrefixes.add("c$maxNumber");
       }
-      if (nonveg.contains(word) && !assignedPrefixes.contains("nv")) {
+      if (matchesCategory(nonveg, word) && !assignedPrefixes.any((p) => p.startsWith("nv"))) {
         autoFoodPrefixNumber("nv");
         assignedPrefixes.add("nv$maxNumber");
       }
-      if (drinks.contains(word) && !assignedPrefixes.contains("d")) {
+      if (matchesCategory(drinks, word) && !assignedPrefixes.any((p) => p.startsWith("d"))) {
         autoFoodPrefixNumber("d");
         assignedPrefixes.add("d$maxNumber");
       }
-      if (sweets.contains(word) && !assignedPrefixes.contains("s")) {
+      if (matchesCategory(sweets, word) && !assignedPrefixes.any((p) => p.startsWith("s"))) {
         autoFoodPrefixNumber("s");
         assignedPrefixes.add("s$maxNumber");
       }
-      if (fruit.contains(word) && !assignedPrefixes.contains("f")) {
+      if (matchesCategory(fruit, word) && !assignedPrefixes.any((p) => p.startsWith("f"))) {
         autoFoodPrefixNumber("f");
         assignedPrefixes.add("f$maxNumber");
       }

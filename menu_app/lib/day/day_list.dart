@@ -36,20 +36,22 @@ class DayList extends StatelessWidget {
             ? futureLightBg
             : lightCyanBg;
 
-    return ClipRRect(
-      // the main large rectangle day panel
-      borderRadius: BorderRadius.circular(30),
-      child: Container(
-        height: height,
-        decoration: BoxDecoration(
-          color: panelColour,
-        ),
-        child: Column(
-          children: [
-            topBar(),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+    return Container(
+      height: height,
+      decoration: BoxDecoration(
+        color: panelColour,
+        borderRadius: BorderRadius.circular(30), // Keeps the outer container looking curved
+      ),
+      child: Column(
+        children: [
+          topBar(),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              // 💎 THE FIX: Create an inner, invisible curved mask right here!
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20), // Adjust this value to dial in the inner curve style
+                clipBehavior: Clip.antiAlias,
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: ConstrainedBox(
@@ -72,8 +74,8 @@ class DayList extends StatelessWidget {
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
