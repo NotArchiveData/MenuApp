@@ -7,7 +7,6 @@ import 'package:menu_app/gsheets_api.dart';
 
 // The shared meal section widget that composes several dropdowns.
 class MealSection extends StatefulWidget {
-  final String title;
   final String panelDate;
   // couldnt name anything better but this is for the column number in the spreadsheet
   final int no;
@@ -16,7 +15,6 @@ class MealSection extends StatefulWidget {
 
   const MealSection({
     super.key,
-    required this.title,
     required this.panelDate,
     required this.no,
     required this.numberOfButtons,
@@ -106,7 +104,7 @@ class _MealSectionState extends State<MealSection> {
             buildButton(
               foodList,
               widget.no,
-              ["v", "nv"],
+              ["v", "nv", "c", "f", "s"],
               currentDish1Id,
               getFoodNameFromId(currentDish1Id),
               rowIndex,

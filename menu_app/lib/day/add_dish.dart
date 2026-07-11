@@ -9,8 +9,8 @@ Future<void> showAddDishDialog(BuildContext context) async {
   final TextEditingController from = TextEditingController();
 
   List<String> assignedPrefixes = [];
-  List<String> carbs = ["bread", "roti", "rice", "quinoa", "parantha", "dimsums", "poha", "amaranth", "pulao"];
-  List<String> nonveg = ["chicken", "fish", "mutton", "prawn", "egg", "omelette"];
+  List<String> carbs = ["bread", "roti", "rice", "quinoa", "parantha", "paratha", "dimsums", "poha", "amaranth", "pulao", "potato", "ragi", "jowar", "atta"];
+  List<String> nonveg = ["chicken", "fish", "mutton", "prawn", "egg", "omelette", "salmon"];
   List<String> drinks = ["smoothie", "drink", "juice", "water", "lassi"];
   List<String> sweets = ["ice cream", "cream", "ice"];
   List<String> fruit = ["watermelon", "mango", "blueberry", "pear", "apple", "custard apple", "banana"];

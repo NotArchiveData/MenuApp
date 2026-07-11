@@ -61,13 +61,25 @@ class DayList extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        buildMealSection(3, "", 1, buttonColour),
+                        
+                        buildMealSection(3, 1, buttonColour),
+                        mealTitle("Morning Drink"),
+
                         const SizedBox(height: 20),
-                        buildMealSection(4, "", 4, buttonColour),
+
+                        buildMealSection(4, 4, buttonColour),
+                        mealTitle("Breakfast"),
+
                         const SizedBox(height: 20),
-                        buildMealSection(8, "", 4, buttonColour),
+
+                        buildMealSection(8, 4, buttonColour),
+                        mealTitle("Lunch"),
+
                         const SizedBox(height: 20),
-                        buildMealSection(12, "", 4, buttonColour),
+
+                        buildMealSection(12, 4, buttonColour),
+                        mealTitle("Dinner"),
+
                       ],
                     ),
                   ),
@@ -80,10 +92,9 @@ class DayList extends StatelessWidget {
     );
   }
 
-  Widget buildMealSection(int no, String mealTitle, int numberOfButtons, Color buttonColour) {
+  Widget buildMealSection(int no, int numberOfButtons, Color buttonColour) {
     return MealSection(
       no: no,
-      title: mealTitle,
       panelDate: date,
       numberOfButtons: numberOfButtons,
       buttonColour: buttonColour,
@@ -132,7 +143,71 @@ class DayList extends StatelessWidget {
       ],
     );
   }
+
+  Widget mealTitle(String meal) {
+    return Column(
+      children: [
+        SizedBox(height: 5),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.fromLTRB(30, 0, 8, 0),
+                height: 8,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(width: 1, color: whiteText.withValues(alpha: 0.5)),
+                    Expanded(
+                      child: Container(
+                        height: 1,
+                        color: whiteText.withValues(alpha: 0.5),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            Transform.translate(
+              offset: const Offset(0, 3),
+              child: Text(
+                meal,
+                style: TextStyle(
+                  color: whiteText.withValues(alpha: 0.5),
+                  fontSize: quaternaryText,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.fromLTRB(8, 0, 30, 0),
+                height: 8, 
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 1,
+                        color: whiteText.withValues(alpha: 0.5),
+                      ),
+                    ),
+                    Container(width: 1, color: whiteText.withValues(alpha: 0.5)),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        )
+      ],
+    );
+  }
 }
+
+
 
 // just to show dd-mmmm instead of yyyy-mm-dd at the top bar of each day
 String dateChange(String inputDate) {
