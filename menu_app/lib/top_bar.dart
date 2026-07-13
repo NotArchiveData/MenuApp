@@ -2,6 +2,7 @@ import 'package:menu_app/constants/colours.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:menu_app/constants/common_values.dart';
+import 'package:menu_app/dialog_attempt.dart';
 import 'package:menu_app/gsheets_api.dart';
 import 'package:menu_app/variables/date.dart' as date;
 
@@ -15,6 +16,19 @@ class TopBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+
+          ElevatedButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return const DummyFoodDialog(); // Clean, parameter-free call
+                },
+              );
+            },
+            child: const Text(''),
+          ),
+
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -50,7 +64,6 @@ class TopBar extends StatelessWidget {
               onTap: () {
                 HapticFeedback.lightImpact();
                 GoogleSheetsApi.refreshData();
-                //launchUrl(Uri.parse("https://docs.google.com/spreadsheets/d/1pj_bQgIMRJRG4BAiZQ-nqB8xYQIJVGGAFlt0T3IKJYU/edit?usp=sharing"));
               },
               customBorder: const CircleBorder(),
               child: Padding(
