@@ -23,9 +23,9 @@ class _DummyFoodDialogState extends State<DummyFoodDialog> {
 
   // Bottom Tabs (Indices 4, 5, 6)
   final List<String> bottomTabIcons = [
-    "assets/icons/bottom1.svg",
-    "assets/icons/bottom2.svg",
-    "assets/icons/bottom3.svg",
+    "assets/icons/dessert.svg",
+    "assets/icons/drink.svg",
+    "assets/icons/everything.svg",
   ];
 
   @override
