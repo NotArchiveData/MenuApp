@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:menu_app/constants/colours.dart';
 import 'package:menu_app/constants/common_values.dart';
-import 'package:menu_app/day/food_list.dart';
+import 'package:menu_app/attempt/select_food.dart';
 import 'package:menu_app/gsheets_api.dart';
 
 // The shared meal section widget that composes several dropdowns.
@@ -102,7 +102,7 @@ class _MealSectionState extends State<MealSection> {
         if (widget.numberOfButtons == 4) Column(
           children: [
             buildButton(
-              foodList,
+              simpleFoodDialog,
               widget.no,
               ["v", "nv", "c", "f", "s"],
               currentDish1Id,
@@ -113,7 +113,7 @@ class _MealSectionState extends State<MealSection> {
               totalButtons: 4,
             ),
             buildButton(
-              foodList,
+              simpleFoodDialog,
               widget.no + 1,
               ["v", "nv"],
               currentDish2Id,
@@ -124,7 +124,7 @@ class _MealSectionState extends State<MealSection> {
               totalButtons: 4,
             ),
             buildButton(
-              foodList,
+              simpleFoodDialog,
               widget.no + 2,
               ["c"],
               currentDish3Id,
@@ -135,7 +135,7 @@ class _MealSectionState extends State<MealSection> {
               totalButtons: 4,
             ),
             buildButton(
-              foodList,
+              simpleFoodDialog,
               widget.no + 3,
               ["v", "nv"],
               currentDish4Id,
@@ -151,7 +151,7 @@ class _MealSectionState extends State<MealSection> {
         if (widget.numberOfButtons == 1) Column(
           children: [
             buildButton(
-              foodList,
+              simpleFoodDialog,
               widget.no,
               ["d"],
               currentDrinkId,

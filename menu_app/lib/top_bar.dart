@@ -2,7 +2,6 @@ import 'package:menu_app/constants/colours.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:menu_app/constants/common_values.dart';
-import 'package:menu_app/attempt/dialog_attempt.dart';
 import 'package:menu_app/gsheets_api.dart';
 import 'package:menu_app/variables/date.dart' as date;
 
@@ -16,18 +15,6 @@ class TopBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-
-          ElevatedButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return const SimpleFoodDialog(); // Clean, parameter-free call
-                },
-              );
-            },
-            child: const Text(''),
-          ),
 
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

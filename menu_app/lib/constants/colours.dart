@@ -13,6 +13,10 @@ final lightCyanBg = Color(0xFF568A80);
 final futureBg = Color(0xFF5E978D);
 final futureLightBg = Color(0xFF75A99D);
 
+// select food panel
+final selectFoodBg = Color(0xFF6B9E72);
+final selectFoodListBg = Color(0xFF84AE89);
+
 // text variants
 final blackText = Color(0xFF46413B);
 final whiteText = Color(0xFFF5E9DD);
