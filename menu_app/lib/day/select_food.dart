@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -10,14 +8,21 @@ import 'package:menu_app/day/add_dish.dart';
 import 'package:menu_app/gsheets_api.dart';
 
 class SimpleFoodDialog extends StatefulWidget {
-  const SimpleFoodDialog({super.key});
+  const SimpleFoodDialog({
+    super.key,
+    required this.panelDate,
+    required this.columnNumberToAddFood,
+  });
+
+  final String panelDate;
+  final int columnNumberToAddFood;
 
   @override
   State<SimpleFoodDialog> createState() => _SimpleFoodDialogState();
-}
+}   
 
 Widget simpleFoodDialog(BuildContext context, String panelDate, int columnNumberToAddFood, List<String> prefix) {
-  return const SimpleFoodDialog();
+  return SimpleFoodDialog(panelDate: panelDate, columnNumberToAddFood: columnNumberToAddFood);
 }
 
 class _SimpleFoodDialogState extends State<SimpleFoodDialog> {
@@ -44,6 +49,25 @@ class _SimpleFoodDialogState extends State<SimpleFoodDialog> {
     "Desserts",
     "Drinks",
   ];
+
+  static const List<String> tabPrefixes = [
+    '',   // All Foods
+    'c',  // Carbs
+    'nv', // Non-Veg
+    'v',  // Veg
+    'f',  // Fruits
+    's',  // Desserts
+    'd',  // Drinks
+  ];
+
+  bool _matchesCategory(String cellValue, String prefix) {
+    if (prefix.isEmpty) return true; // All Foods
+    final segments = cellValue.toLowerCase().split(',').map((s) => s.trim());
+    return segments.any((segment) {
+      final match = RegExp(r'^[a-z]+').firstMatch(segment);
+      return match?.group(0) == prefix;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,13 +151,30 @@ class _SimpleFoodDialogState extends State<SimpleFoodDialog> {
     );
   }
 
+  // all list items of food
   Widget foodListView() {
+    final activePrefix = tabPrefixes[selectedTabIndex];
+    final query = searchController.text.toLowerCase().trim();
+
     final items = List<List<String>>.from(GoogleSheetsApi.foodItems)
-    ..sort((a, b) {
-      final nameA = a.length > 1 ? a[1] : a.first;
-      final nameB = b.length > 1 ? b[1] : b.first;
-      return nameA.toLowerCase().compareTo(nameB.toLowerCase());
-    });
+      .where((row) => _matchesCategory(row.first, activePrefix))
+      .where((row) {
+        final displayName = row.length > 1 ? row[1] : row.first;
+        return query.isEmpty || displayName.toLowerCase().contains(query);
+      })
+      .toList()
+      ..sort((a, b) {
+        final nameA = a.length > 1 ? a[1] : a.first;
+        final nameB = b.length > 1 ? b[1] : b.first;
+        return nameA.toLowerCase().compareTo(nameB.toLowerCase());
+      });
+
+    if (items.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 20),
+        child: Text('Not found', style: TextStyle(fontSize: tertiaryText, color: Colors.white70)),
+      );
+    }
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
@@ -150,9 +191,17 @@ class _SimpleFoodDialogState extends State<SimpleFoodDialog> {
               child: InkWell(
                 onTap: () async {
                   HapticFeedback.lightImpact();
-                  // Navigator.of(context).pop(food);
-                  // final target = GoogleSheetsApi.findRowIndexByDate(widget.panelDate);
-                  // if (target != -1) await GoogleSheetsApi.updateSingleMealSlot(rowIndex: target, columnIndex: widget.columnNumberToAddFood, foodId: food.id);
+
+                  final foodId = row.first;
+                  Navigator.of(context).pop(FoodOption(id: foodId, name: displayName));
+                  final target = GoogleSheetsApi.findRowIndexByDate(widget.panelDate);
+                  if (target != -1) {
+                    await GoogleSheetsApi.updateSingleMealSlot(
+                      rowIndex: target,
+                      columnIndex: widget.columnNumberToAddFood,
+                      foodId: foodId,
+                    );
+                  }
                 },
                 splashColor: Colors.white12,
                 highlightColor: Colors.white10,
@@ -164,7 +213,7 @@ class _SimpleFoodDialogState extends State<SimpleFoodDialog> {
                   endActionPane: ActionPane(motion: const StretchMotion(), children: [
                     SlidableAction(onPressed: (_) { HapticFeedback.lightImpact(); }, icon: Icons.delete, backgroundColor: expRed),
                   ]),
-                  
+
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
@@ -175,11 +224,15 @@ class _SimpleFoodDialogState extends State<SimpleFoodDialog> {
                   
                         // food type circle
                         Container(
-                          height: 10,
-                          width: 10,
+                          height: 12,
+                          width: 12,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: white,
+                            color: getCircleColorFromId(row.first),
+                            border: Border.all(
+                              color: iconOutline, // Constant light outline
+                              width: 1,
+                            ),
                           ),
                         ),
                   

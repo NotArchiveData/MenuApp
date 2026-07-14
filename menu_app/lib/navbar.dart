@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:menu_app/constants/colours.dart';
 
 class NavBar extends StatelessWidget {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:menu_app/constants/colours.dart';
 import 'package:menu_app/constants/common_values.dart';
-import 'package:menu_app/attempt/select_food.dart';
+import 'package:menu_app/day/select_food.dart';
 import 'package:menu_app/gsheets_api.dart';
 
 // The shared meal section widget that composes several dropdowns.
@@ -38,33 +38,6 @@ class _MealSectionState extends State<MealSection> {
 
     // If found, return column 2 (index 1), else return the raw ID as a fallback
     return match.length > 1 ? match[1].trim() : id;
-  }
-
-  String getPrefixFromId(String id) {
-    final cleaned = id.trim().toLowerCase();
-    if (cleaned.isEmpty) return '';
-    final firstSegment = cleaned.split(',').first.trim();
-    final match = RegExp(r'^[a-z]+').firstMatch(firstSegment);
-    return match?.group(0) ?? '';
-  }
-
-  Color getCircleColorFromId(String id) {
-    if (id.isEmpty) return whiteCircle.withValues(alpha: 0.5);
-    switch (getPrefixFromId(id)) {
-      case 'c':
-        return carbCircle;
-      case 'd':
-        return drinkCircle;
-      case 'nv':
-        return nonVegCircle;
-      case 's':
-        return sweetsCircle;
-      case 'f':
-        return fruitCircle;
-      case 'v':
-      default:
-        return vegCircle;
-    }
   }
 
   @override

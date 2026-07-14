@@ -31,6 +31,33 @@ final fruitCircle = Color(0xFFB07119);
 final whiteCircle = Color(0xFFF5E9DD);
 final iconOutline = Color(0xFFF5E9DD);
 
+// dot logic
+String getPrefixFromId(String id) {
+  final cleaned = id.trim().toLowerCase();
+  if (cleaned.isEmpty) return '';
+  final firstSegment = cleaned.split(',').first.trim();
+  final match = RegExp(r'^[a-z]+').firstMatch(firstSegment);
+  return match?.group(0) ?? '';
+}
+
+Color getCircleColorFromId(String id) {
+  if (id.isEmpty) return whiteCircle.withValues(alpha: 0.5);
+  switch (getPrefixFromId(id)) {
+    case 'c':
+      return carbCircle;
+    case 'd':
+      return drinkCircle;
+    case 'nv':
+      return nonVegCircle;
+    case 's':
+      return sweetsCircle;
+    case 'f':
+      return fruitCircle;
+    case 'v':
+    default:
+      return vegCircle;
+  }
+}
 
 // text
 final text = Color(0xFF46413B);
