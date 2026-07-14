@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:menu_app/constants/colours.dart';
 import 'package:menu_app/constants/common_values.dart';
 import 'package:menu_app/day/button.dart';
+import 'package:menu_app/ingredients.dart';
 import 'package:menu_app/variables/date.dart';
 
 // <--- main DayList class. The stuff for the entire panel ---> 
@@ -45,6 +48,7 @@ class DayList extends StatelessWidget {
       child: Column(
         children: [
           topBar(),
+
           Expanded(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
@@ -79,7 +83,6 @@ class DayList extends StatelessWidget {
 
                         buildMealSection(12, 4, buttonColour),
                         mealTitle("Dinner"),
-
                       ],
                     ),
                   ),
@@ -87,6 +90,8 @@ class DayList extends StatelessWidget {
               ),
             ),
           ),
+        
+          bottomBar(context)
         ],
       ),
     );
@@ -141,6 +146,39 @@ class DayList extends StatelessWidget {
         const SizedBox(height: 20),
   
       ],
+    );
+  }
+
+  Widget bottomBar(BuildContext context) {
+    return Padding(
+      padding: EdgeInsetsGeometry.fromLTRB(20, 0, 20, 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Material(
+            color: Colors.white12,
+            shape: const CircleBorder(),
+            child: InkWell(
+              onTap: () async {
+                HapticFeedback.lightImpact();
+                showIngredientsDialog(context, date);
+              },
+              customBorder: const CircleBorder(),
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: SvgPicture.asset(
+                  "assets/icons/ingredients.svg",
+                  colorFilter: ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                  height: 20,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -206,7 +244,6 @@ class DayList extends StatelessWidget {
     );
   }
 }
-
 
 
 // just to show dd-mmmm instead of yyyy-mm-dd at the top bar of each day

@@ -5,7 +5,6 @@ import 'package:menu_app/gsheets_api.dart';
 import 'package:menu_app/constants/colours.dart';
 import 'package:menu_app/top_bar.dart';
 import 'package:menu_app/day/day_list.dart';
-import 'package:menu_app/navbar.dart';
 import 'package:menu_app/variables/date.dart' as date;
 
 class LandingPage extends StatefulWidget {
@@ -131,7 +130,6 @@ class _LandingPageState extends State<LandingPage> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-          child: const NavBar(),
         ),
       ),
     );

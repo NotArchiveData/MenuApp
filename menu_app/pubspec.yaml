@@ -83,6 +83,8 @@ flutter:
     - assets/icons/fruit.svg
     - assets/icons/nonveg.svg
     - assets/icons/veg.svg
+    - assets/icons/ingredients.svg
+    - assets/icons/grocerylist.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
