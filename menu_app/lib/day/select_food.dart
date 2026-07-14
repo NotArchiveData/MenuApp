@@ -69,6 +69,27 @@ class _SimpleFoodDialogState extends State<SimpleFoodDialog> {
     });
   }
 
+  static const List<int> allColumns = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+
+  String lastMadeLabel(String foodId) {
+  final days = GoogleSheetsApi.calculateDaysSinceLastEaten(
+    panelDate: widget.panelDate,
+    columnIndices: allColumns,
+    foodId: foodId,
+  );
+  if (days == -1) return 'Never had';
+  if (days == 1) return 'Had yesterday';
+  return 'Had $days days ago';
+}
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.columnNumberToAddFood == 3) {
+      selectedTabIndex = tabPrefixes.indexOf('d');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -248,7 +269,7 @@ class _SimpleFoodDialogState extends State<SimpleFoodDialog> {
                                 style: TextStyle(color: whiteText, fontSize: tertiaryText),
                               ),
                               Text(
-                                "Made 5 days ago",
+                                lastMadeLabel(row.first),
                                 style: TextStyle(color: whiteText.withValues(alpha: 0.5), fontSize: quaternaryText),
                               ),
                             ],
