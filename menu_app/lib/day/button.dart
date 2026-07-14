@@ -186,7 +186,7 @@ class _MealSectionState extends State<MealSection> {
           splashColor: Colors.white12,
           highlightColor: Colors.white10,
           child: Container(
-            height: 50,
+            height: 60,
             padding: const EdgeInsets.symmetric(horizontal: 10),
             decoration: BoxDecoration(
               color: widget.buttonColour,

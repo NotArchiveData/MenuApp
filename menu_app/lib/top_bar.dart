@@ -1,3 +1,4 @@
+import 'package:flutter_svg/svg.dart';
 import 'package:menu_app/constants/colours.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,23 +43,46 @@ class TopBar extends StatelessWidget {
               )
             ],
           ),
-      
-          // icon to go to spreadsheets
-          Material(
-            color: accent,
-            shape: const CircleBorder(),
-            child: InkWell(
-              onTap: () {
-                HapticFeedback.lightImpact();
-                GoogleSheetsApi.refreshData();
-              },
-              customBorder: const CircleBorder(),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                // child: Icon(Icons.exit_to_app, color: Colors.white),
-                child: Icon(Icons.refresh, color: Colors.white)
+
+          Row(
+            children: [
+              Material(
+                color: cyanBg,
+                shape: const CircleBorder(),
+                child: InkWell(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    GoogleSheetsApi.refreshData();
+                  },
+                  customBorder: const CircleBorder(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    // child: Icon(Icons.exit_to_app, color: Colors.white),
+                    child: Icon(Icons.shopping_cart_outlined, color: Colors.white70)
+                  ),
+                ),
               ),
-            ),
+
+              SizedBox(width: 5),
+                    
+              // icon to go to spreadsheets
+              Material(
+                color: cyanBg,
+                shape: const CircleBorder(),
+                child: InkWell(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    GoogleSheetsApi.refreshData();
+                  },
+                  customBorder: const CircleBorder(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    // child: Icon(Icons.exit_to_app, color: Colors.white),
+                    child: Icon(Icons.refresh, color: Colors.white70)
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

@@ -37,7 +37,6 @@ class _DummyFoodDialogState extends State<DummyFoodDialog> {
         height: 480,
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final double width = constraints.maxWidth;
 
             return Stack(
               children: [

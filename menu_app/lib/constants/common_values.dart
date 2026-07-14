@@ -8,6 +8,6 @@ const double radius = 15;
 
 // text heights
 const double primaryText = 18;
-const double secondaryText = 15;
-const double tertiaryText = 12;
-const double quaternaryText = 10;
+const double secondaryText = 16;
+const double tertiaryText = 14;
+const double quaternaryText = 12;

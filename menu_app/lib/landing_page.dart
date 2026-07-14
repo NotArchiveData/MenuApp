@@ -76,7 +76,7 @@ class _LandingPageState extends State<LandingPage> {
     return Scaffold(
       backgroundColor: mainBg,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Column(
           children: [
             const SizedBox(height: 50),

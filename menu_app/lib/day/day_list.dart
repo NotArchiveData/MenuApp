@@ -66,23 +66,24 @@ class DayList extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         
-                        buildMealSection(3, 1, buttonColour),
                         mealTitle("Morning Drink"),
+                        buildMealSection(3, 1, buttonColour),
+                        
+                        const SizedBox(height: 25),
 
-                        const SizedBox(height: 20),
-
-                        buildMealSection(4, 4, buttonColour),
                         mealTitle("Breakfast"),
+                        buildMealSection(4, 4, buttonColour),
+                        
+                        const SizedBox(height: 25),
 
-                        const SizedBox(height: 20),
-
-                        buildMealSection(8, 4, buttonColour),
                         mealTitle("Lunch"),
+                        buildMealSection(8, 4, buttonColour),
+                        
+                        const SizedBox(height: 25),
 
-                        const SizedBox(height: 20),
-
-                        buildMealSection(12, 4, buttonColour),
                         mealTitle("Dinner"),
+                        buildMealSection(12, 4, buttonColour),
+                        
                       ],
                     ),
                   ),
@@ -182,10 +183,10 @@ class DayList extends StatelessWidget {
     );
   }
 
+  // |---- meal ----|
   Widget mealTitle(String meal) {
     return Column(
       children: [
-        SizedBox(height: 5),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -194,7 +195,7 @@ class DayList extends StatelessWidget {
                 margin: const EdgeInsets.fromLTRB(30, 0, 8, 0),
                 height: 8,
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(width: 1, color: whiteText.withValues(alpha: 0.5)),
                     Expanded(
@@ -208,8 +209,9 @@ class DayList extends StatelessWidget {
               ),
             ),
 
+            // breakfast lunch dinner etc
             Transform.translate(
-              offset: const Offset(0, 3),
+              offset: const Offset(0, -3),
               child: Text(
                 meal,
                 style: TextStyle(
@@ -225,7 +227,7 @@ class DayList extends StatelessWidget {
                 margin: const EdgeInsets.fromLTRB(8, 0, 30, 0),
                 height: 8, 
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: Container(
@@ -239,7 +241,9 @@ class DayList extends StatelessWidget {
               ),
             ),
           ],
-        )
+        ),
+
+        SizedBox(height: 5),
       ],
     );
   }
