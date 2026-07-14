@@ -9,11 +9,6 @@ Future<void> showAddDishDialog(BuildContext context) async {
   final TextEditingController from = TextEditingController();
 
   List<String> assignedPrefixes = [];
-  List<String> carbs = ["bread", "roti", "rice", "quinoa", "parantha", "paratha", "dimsums", "poha", "amaranth", "pulao", "potato", "ragi", "jowar", "atta"];
-  List<String> nonveg = ["chicken", "fish", "mutton", "prawn", "egg", "omelette", "salmon"];
-  List<String> drinks = ["smoothie", "drink", "juice", "water", "lassi"];
-  List<String> sweets = ["ice cream", "cream", "ice"];
-  List<String> fruit = ["watermelon", "mango", "blueberry", "pear", "apple", "custard apple", "banana"];
   int maxNumber = 0;
 
   // focus nodes for text fields to go from one to two
@@ -69,42 +64,28 @@ Future<void> showAddDishDialog(BuildContext context) async {
 
   // as the function name suggests,
   autoFoodPrefixLetter() {
-    String inputDish = foodName.text.toLowerCase(); // "chicken fried rice"
-    // Split by spaces into individual words: ["chicken", "fried", "rice"]
-    List<String> dishWords = inputDish.split(' '); 
+    String inputDish = foodName.text.toLowerCase();
+    List<String> dishWords = inputDish.split(' ');
 
-    // Helper function to check if any keyword in a category matches a word
-    bool matchesCategory(List<String> categoryList, String word) {
-      return categoryList.any((keyword) => word.contains(keyword));
+    bool matchesCategory(List<String> categoryKeywords, String word) {
+      return categoryKeywords.any((keyword) => word.contains(keyword));
     }
 
-    // Check for matches
     for (String word in dishWords) {
-      if (matchesCategory(carbs, word) && !assignedPrefixes.any((p) => p.startsWith("c"))) {
-        autoFoodPrefixNumber("c");
-        assignedPrefixes.add("c$maxNumber");
-      }
-      if (matchesCategory(nonveg, word) && !assignedPrefixes.any((p) => p.startsWith("nv"))) {
-        autoFoodPrefixNumber("nv");
-        assignedPrefixes.add("nv$maxNumber");
-      }
-      if (matchesCategory(drinks, word) && !assignedPrefixes.any((p) => p.startsWith("d"))) {
-        autoFoodPrefixNumber("d");
-        assignedPrefixes.add("d$maxNumber");
-      }
-      if (matchesCategory(sweets, word) && !assignedPrefixes.any((p) => p.startsWith("s"))) {
-        autoFoodPrefixNumber("s");
-        assignedPrefixes.add("s$maxNumber");
-      }
-      if (matchesCategory(fruit, word) && !assignedPrefixes.any((p) => p.startsWith("f"))) {
-        autoFoodPrefixNumber("f");
-        assignedPrefixes.add("f$maxNumber");
+      for (final entry in GoogleSheetsApi.keywordCategories.entries) {
+        final prefix = entry.key;
+        final keywords = entry.value;
+        final alreadyAssigned = assignedPrefixes.any((p) => p.startsWith(prefix));
+
+        if (!alreadyAssigned && matchesCategory(keywords, word)) {
+          autoFoodPrefixNumber(prefix);
+          assignedPrefixes.add("$prefix$maxNumber");
+        }
       }
     }
 
-    // If it doesn't match anything, give it a default prefix (e.g., "v" for veg / general)
     if (assignedPrefixes.isEmpty) {
-      autoFoodPrefixNumber("v"); 
+      autoFoodPrefixNumber("v");
       assignedPrefixes.add("v$maxNumber");
     }
   }
