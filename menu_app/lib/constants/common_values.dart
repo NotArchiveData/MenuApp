@@ -11,3 +11,6 @@ const double primaryText = 18;
 const double secondaryText = 16;
 const double tertiaryText = 14;
 const double quaternaryText = 12;
+
+// rounding
+const double rounding = 30;

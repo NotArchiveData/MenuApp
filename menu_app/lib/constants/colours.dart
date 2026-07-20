@@ -14,6 +14,7 @@ final futureBg = Color(0xFF5E978D);
 final futureLightBg = Color(0xFF75A99D);
 
 // select food panel
+final selectFoodIconBg = Color(0xFF59885F);
 final selectFoodBg = Color(0xFF6B9E72);
 final selectFoodListBg = Color(0xFF84AE89);
 

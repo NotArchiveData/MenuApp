@@ -43,7 +43,7 @@ class _SimpleFoodDialogState extends State<SimpleFoodDialog> {
   static const List<String> tabLabels = [
     "All Foods",
     "Carbs",
-    "Non-Veg",
+    "Non Veg",
     "Veg",
     "Fruits",
     "Desserts",
@@ -93,26 +93,36 @@ class _SimpleFoodDialogState extends State<SimpleFoodDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Colors.transparent,
+      backgroundColor: selectFoodBg,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(rounding),
+      ),
       insetPadding: const EdgeInsets.symmetric(horizontal: 25),
       child: SizedBox(
         height: 400,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-
+        
             // search menu and main panel
-            Expanded(flex: 4, child: searchPanel()),
-
-            const SizedBox(width: 12),
-
+            Expanded(child: searchPanel()),
+        
             // right panel for icons 
-            Column(
-              children: [
-                Expanded(child: iconTabsPanel()),
-                const SizedBox(height: 12),
-                SizedBox(width: 50, height: 50, child: addButtonPanel()),
-              ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+              child: ClipRRect(
+                borderRadius: BorderRadiusGeometry.circular(rounding),
+                child: Container(
+                  color: selectFoodIconBg,
+                  child: Column(
+                    children: [
+                      Expanded(child: iconTabsPanel()),
+                      const SizedBox(height: 12),
+                      SizedBox(width: 50, height: 50, child: addButtonPanel()),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -121,27 +131,11 @@ class _SimpleFoodDialogState extends State<SimpleFoodDialog> {
   }
 
   Widget searchPanel() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: selectFoodBg,
-        borderRadius: BorderRadius.circular(20),
-      ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 15, 10, 10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-
-          Text(
-            tabLabels[selectedTabIndex],
-            style: TextStyle(
-              color: whiteText, 
-              fontSize: tertiaryText,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-
-          const SizedBox(height: 10),
-
           SizedBox(
             height: 42,
             child: TextField(
@@ -150,22 +144,22 @@ class _SimpleFoodDialogState extends State<SimpleFoodDialog> {
               style: const TextStyle(color: Colors.white),
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
-                hintText: 'Search..',
+                hintText: "${tabLabels[selectedTabIndex]}..",
                 hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: tertiaryText),
                 prefixIcon: Icon(Icons.search, color: Colors.white.withValues(alpha: 0.6)),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(rounding),
                   borderSide: BorderSide.none,
                 ),
                 contentPadding: const EdgeInsets.symmetric(vertical: 0),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.05),
+                fillColor: Colors.white.withValues(alpha: 0.1),
               ),
             ),
           ),
         
           const SizedBox(height: 10),
-
+      
           Expanded(child: foodListView()),
         ],
       ),
@@ -198,7 +192,7 @@ class _SimpleFoodDialogState extends State<SimpleFoodDialog> {
     }
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(rounding),
       child: ListView.builder(
         itemCount: items.length,
         itemBuilder: (context, i) {
@@ -206,9 +200,9 @@ class _SimpleFoodDialogState extends State<SimpleFoodDialog> {
           final displayName = row.length > 1 ? row[1] : row.first;
 
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 2),
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 2),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(0),
               child: InkWell(
                 onTap: () async {
                   HapticFeedback.lightImpact();
@@ -292,8 +286,8 @@ class _SimpleFoodDialogState extends State<SimpleFoodDialog> {
     return Container(
       width: 50,
       decoration: BoxDecoration(
-        color: selectFoodBg,
-        borderRadius: BorderRadius.circular(20),
+        color: selectFoodIconBg,
+        borderRadius: BorderRadius.circular(rounding),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -331,7 +325,7 @@ class _SimpleFoodDialogState extends State<SimpleFoodDialog> {
   Widget addButtonPanel() {
     return Container(
       decoration: BoxDecoration(
-        color: selectFoodBg,
+        color: selectFoodIconBg,
         borderRadius: BorderRadius.circular(200),
       ),
       child: Material(
