@@ -48,16 +48,16 @@ class _DayListState extends State<DayList> {
       height: widget.height,
       decoration: BoxDecoration(
         color: panelColour,
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(rounding),
       ),
       child: Column(
         children: [
           topBar(),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(rounding),
                 clipBehavior: Clip.antiAlias,
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
@@ -193,7 +193,7 @@ class _DayListState extends State<DayList> {
                 // Slow: sync to the sheet in the background, no await, no blocking.
                 GoogleSheetsApi.syncRowToSheet(widget.date).catchError((e) {
                   print("Autofill sync failed: $e");
-                  
+
                 });
               },
               customBorder: const CircleBorder(),

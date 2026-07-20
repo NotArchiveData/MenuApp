@@ -155,10 +155,10 @@ class _MealSectionState extends State<MealSection> {
     final bool isFirst = index == 0;
     final bool isLast = index == totalButtons - 1;
     final BorderRadius borderRadius = BorderRadius.only(
-      topLeft: isFirst ? const Radius.circular(20) : Radius.zero,
-      topRight: isFirst ? const Radius.circular(20) : Radius.zero,
-      bottomLeft: isLast ? const Radius.circular(20) : Radius.zero,
-      bottomRight: isLast ? const Radius.circular(20) : Radius.zero,
+      topLeft: isFirst ? const Radius.circular(rounding) : Radius.zero,
+      topRight: isFirst ? const Radius.circular(rounding) : Radius.zero,
+      bottomLeft: isLast ? const Radius.circular(rounding) : Radius.zero,
+      bottomRight: isLast ? const Radius.circular(rounding) : Radius.zero,
     );
 
     return Padding(

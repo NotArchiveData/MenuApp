@@ -75,56 +75,64 @@ class _LandingPageState extends State<LandingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: mainBg,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Column(
-          children: [
-            const SizedBox(height: 50),
-            TopBar(),
-            const SizedBox(height: 20),
-            Expanded(
-              child: RefreshIndicator(
-                color: Colors.white,
-                backgroundColor: mainBg,
-                onRefresh: _refreshTransactions,
-                child: GoogleSheetsApi.loading
-                    ? const Center(child: CircularProgressIndicator())
-                    : LayoutBuilder(
-                        builder: (context, constraints) {
-                          const double pageSpacing = 10.0;
-                          final double pageHeight = constraints.maxHeight - pageSpacing;
-                          final list = GoogleSheetsApi.calendarDates;
-                          final int itemCount = list.length;
-                            
-                          Widget buildPage(int index) {
-                            return Padding(
-                              padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-                              child: SizedBox(
-                                height: pageHeight,
-                                child: DayList(
-                                  date: list[index][0],
-                                  day: list[index][1],
-                                  height: pageHeight,
-                                ),
-                              ),
-                            );
-                          }
-                            
-                          return PageView.builder(
-                            controller: pageController,
-                            scrollDirection: Axis.horizontal,
-                            padEnds: false,
-                            physics: const PageScrollPhysics(parent: BouncingScrollPhysics()),
-                            itemCount: itemCount,
-                            itemBuilder: (context, index) {
-                              return buildPage(index);
-                            },
-                          );
-                        },
-                      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
+              TopBar(
+                onRefresh: () {
+                  setState(() {
+                    // Rebuilds the parent widget after fresh data finishes loading
+                  });
+                },
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+              Expanded(
+                child: RefreshIndicator(
+                  color: Colors.white,
+                  backgroundColor: mainBg,
+                  onRefresh: _refreshTransactions,
+                  child: GoogleSheetsApi.loading
+                      ? const Center(child: CircularProgressIndicator())
+                      : LayoutBuilder(
+                          builder: (context, constraints) {
+                            const double pageSpacing = 10.0;
+                            final double pageHeight = constraints.maxHeight - pageSpacing;
+                            final list = GoogleSheetsApi.calendarDates;
+                            final int itemCount = list.length;
+                              
+                            Widget buildPage(int index) {
+                              return Padding(
+                                padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                child: SizedBox(
+                                  height: pageHeight,
+                                  child: DayList(
+                                    date: list[index][0],
+                                    day: list[index][1],
+                                    height: pageHeight,
+                                  ),
+                                ),
+                              );
+                            }
+                              
+                            return PageView.builder(
+                              controller: pageController,
+                              scrollDirection: Axis.horizontal,
+                              padEnds: false,
+                              physics: const PageScrollPhysics(parent: BouncingScrollPhysics()),
+                              itemCount: itemCount,
+                              itemBuilder: (context, index) {
+                                return buildPage(index);
+                              },
+                            );
+                          },
+                        ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: SafeArea(

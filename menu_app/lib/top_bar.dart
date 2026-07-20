@@ -6,7 +6,12 @@ import 'package:menu_app/gsheets_api.dart';
 import 'package:menu_app/variables/date.dart' as date;
 
 class TopBar extends StatelessWidget {
-  const TopBar({super.key});
+  final VoidCallback? onRefresh;
+
+  const TopBar({
+    super.key,
+    this.onRefresh,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -69,9 +74,10 @@ class TopBar extends StatelessWidget {
                 color: presentBg,
                 shape: const CircleBorder(),
                 child: InkWell(
-                  onTap: () {
+                  onTap: () async {
                     HapticFeedback.lightImpact();
-                    GoogleSheetsApi.refreshData();
+                    await GoogleSheetsApi.refreshData();
+                    onRefresh?.call(); // Triggers rebuild in the parent widget
                   },
                   customBorder: const CircleBorder(),
                   child: Padding(
