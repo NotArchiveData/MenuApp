@@ -1,4 +1,3 @@
-import 'package:flutter_svg/svg.dart';
 import 'package:menu_app/constants/colours.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -47,7 +46,7 @@ class TopBar extends StatelessWidget {
           Row(
             children: [
               Material(
-                color: cyanBg,
+                color: presentBg,
                 shape: const CircleBorder(),
                 child: InkWell(
                   onTap: () {
@@ -67,7 +66,7 @@ class TopBar extends StatelessWidget {
                     
               // icon to go to spreadsheets
               Material(
-                color: cyanBg,
+                color: presentBg,
                 shape: const CircleBorder(),
                 child: InkWell(
                   onTap: () {

@@ -7,8 +7,8 @@ final mainBg = Color(0xFFF5E9DD);
 final pastBg = Color(0xFF2F4B46); 
 final pastLightBg = Color(0xFF3F645C);
 
-final cyanBg = Color(0xFF47716A);
-final lightCyanBg = Color(0xFF568A80);
+final presentBg = Color(0xFF773344);
+final presentLightBg = Color(0xFF9D435A);
 
 final futureBg = Color(0xFF5E978D);
 final futureLightBg = Color(0xFF75A99D);

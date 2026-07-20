@@ -197,35 +197,38 @@ class _MealSectionState extends State<MealSection> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        height: 14,
-                        width: 14,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: getCircleColorFromId(foodId),
-                          border: Border.all(
-                            color: iconOutline, // Constant light outline
-                            width: 1,
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 14,
+                          width: 14,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: getCircleColorFromId(foodId),
+                            border: Border.all(
+                              color: iconOutline, // Constant light outline
+                              width: 1,
+                            ),
                           ),
                         ),
-                      ),
-                                  
-                      const SizedBox(width: 12),
-                                  
-                      Text(
-                        displayLabel,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: tertiaryText, 
-                          color: displayLabel == "Select Dish" ? whiteText.withValues(alpha: 0.5) : whiteText,
+                                    
+                        const SizedBox(width: 12),
+                                    
+                        Expanded(
+                          child: Text(
+                            displayLabel,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: tertiaryText, 
+                              color: displayLabel == "Select Dish" ? whiteText.withValues(alpha: 0.5) : whiteText,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
               
                   // delete item
