@@ -2,8 +2,10 @@ import 'package:menu_app/constants/colours.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:menu_app/constants/common_values.dart';
+import 'package:menu_app/grocerylist_page.dart';
 import 'package:menu_app/gsheets_api.dart';
 import 'package:menu_app/variables/date.dart' as date;
+import 'package:flutter/cupertino.dart';
 
 class TopBar extends StatelessWidget {
   final VoidCallback? onRefresh;
@@ -50,13 +52,20 @@ class TopBar extends StatelessWidget {
 
           Row(
             children: [
+
+              // icon to go to grocery list
               Material(
                 color: presentBg,
                 shape: const CircleBorder(),
                 child: InkWell(
                   onTap: () {
                     HapticFeedback.lightImpact();
-                    GoogleSheetsApi.refreshData();
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                        builder: (context) => const GroceryListPage(),
+                      ),
+                    );
                   },
                   customBorder: const CircleBorder(),
                   child: Padding(
@@ -69,7 +78,7 @@ class TopBar extends StatelessWidget {
 
               SizedBox(width: 5),
                     
-              // icon to go to spreadsheets
+              // icon to reload data
               Material(
                 color: presentBg,
                 shape: const CircleBorder(),
