@@ -39,9 +39,14 @@ Future<void> showIngredientsDialog(BuildContext context, String panelDate) async
                           itemCount: ingredients.length,
                           separatorBuilder: (_, __) => const SizedBox(height: 10),
                           itemBuilder: (context, i) {
-                            return Text(
-                              ingredients[i],
-                              style: const TextStyle(color: Colors.white, fontSize: 15),
+                            return GestureDetector(
+                              onTap: () { 
+                                GoogleSheetsApi.addGroceryItem(ingredients[i]);
+                              },
+                              child: Text(
+                                ingredients[i],
+                                style: const TextStyle(color: Colors.white, fontSize: 15),
+                              ),
                             );
                           },
                         ),

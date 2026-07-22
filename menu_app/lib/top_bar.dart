@@ -60,6 +60,8 @@ class TopBar extends StatelessWidget {
                 child: InkWell(
                   onTap: () {
                     HapticFeedback.lightImpact();
+                    // GoogleSheetsApi.loadGroceryList();
+                    
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
