@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:menu_app/constants/colours.dart';
 import 'package:menu_app/gsheets_api.dart';
 
 Future<void> showIngredientsDialog(BuildContext context, String panelDate) async {
-  final ingredients = GoogleSheetsApi.getIngredientsForDate(panelDate);
+  final grouped = GoogleSheetsApi.getCookPrepIngredients(panelDate);
 
   return showDialog(
     context: context,
@@ -12,7 +13,7 @@ Future<void> showIngredientsDialog(BuildContext context, String panelDate) async
         backgroundColor: Colors.transparent,
         insetPadding: const EdgeInsets.symmetric(horizontal: 25),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxHeight: 410),
+          constraints: const BoxConstraints(maxHeight: 500),
           child: Container(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
             decoration: BoxDecoration(
@@ -29,27 +30,12 @@ Future<void> showIngredientsDialog(BuildContext context, String panelDate) async
                 ),
                 const SizedBox(height: 16),
                 Flexible(
-                  child: ingredients.isEmpty
-                      ? const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20),
-                          child: Text('No ingredients yet', style: TextStyle(color: Colors.white70)),
-                        )
-                      : ListView.separated(
-                          shrinkWrap: true,
-                          itemCount: ingredients.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 10),
-                          itemBuilder: (context, i) {
-                            return GestureDetector(
-                              onTap: () { 
-                                GoogleSheetsApi.addGroceryItem(ingredients[i]);
-                              },
-                              child: Text(
-                                ingredients[i],
-                                style: const TextStyle(color: Colors.white, fontSize: 15),
-                              ),
-                            );
-                          },
-                        ),
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: grouped.entries
+                        .map((entry) => _ingredientSection(entry.key, entry.value))
+                        .toList(),
+                  ),
                 ),
                 const SizedBox(height: 8),
               ],
@@ -58,5 +44,39 @@ Future<void> showIngredientsDialog(BuildContext context, String panelDate) async
         ),
       );
     },
+  );
+}
+
+Widget _ingredientSection(String title, List<String> ingredients) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 18),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 8),
+        if (ingredients.isEmpty)
+          const Text('Nothing yet', style: TextStyle(color: Colors.white38, fontSize: 14))
+        else
+          ...ingredients.map(
+            (item) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: GestureDetector(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  GoogleSheetsApi.addGroceryItem(item);
+                },
+                child: Text(
+                  item,
+                  style: const TextStyle(color: Colors.white, fontSize: 15),
+                ),
+              ),
+            ),
+          ),
+      ],
+    ),
   );
 }
