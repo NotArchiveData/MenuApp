@@ -45,5 +45,4 @@ app.*.map.json
 /android/app/release
 
 # Specific lib files
-/menu_app/lib/gsheets_api.dart
-lib/gsheets_api.dart
+lib/constants/api.dart

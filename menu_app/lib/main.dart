@@ -1,9 +1,9 @@
 import 'package:menu_app/constants/colours.dart';
-import 'package:menu_app/landing_page.dart';
 import 'package:menu_app/gsheets_api.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:menu_app/landing_page.dart';
 
 void main() async {  
   // initialise google sheets
@@ -41,6 +41,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: LandingPage(),
+      // home: ReadPdfPage(),
     );
   }
   
