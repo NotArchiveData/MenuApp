@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:menu_app/constants/colours.dart';
 import 'package:menu_app/gsheets_api.dart';
 
-Future<void> showAddDishDialog(BuildContext context) async {
+Future<String?> showAddDishDialog(BuildContext context) async {
   // stuff to get access to inputs
   final TextEditingController foodName = TextEditingController();
   final TextEditingController from = TextEditingController();
@@ -96,12 +96,12 @@ Future<void> showAddDishDialog(BuildContext context) async {
                             
     // if (foodName.text.trim().isEmpty || from.text.trim().isEmpty) {
     if (foodName.text.trim().isEmpty) {
-
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please fill all required fields")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please fill all required fields")),
+      );
     } else {
-
-      Navigator.of(context).pop();
       autoFoodPrefixLetter();
+      final String newId = assignedPrefixes.join(', ');
 
       // enter food item
       GoogleSheetsApi.addFoodItem(
@@ -114,10 +114,12 @@ Future<void> showAddDishDialog(BuildContext context) async {
       foodName.clear();
       from.clear();
       assignedPrefixes.clear();
+
+      Navigator.of(context).pop(newId);
     }
   }
 
-  return showDialog(
+  return showDialog<String?>(
     context: context,
     builder: (context) {
       return Dialog(
@@ -196,7 +198,7 @@ Future<void> showAddDishDialog(BuildContext context) async {
                         child: InkWell(
                           onTap: () {
                             HapticFeedback.lightImpact();
-                            Navigator.of(context).pop();
+                            Navigator.of(context).pop(null);
                       
                             foodName.clear();
                             from.clear();

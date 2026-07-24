@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:menu_app/gsheets_api.dart';
+import 'package:menu_app/testingg/diet_review.dart';
 import 'package:menu_app/testingg/loadingoverlay.dart';
 
 // ============================================================
 // MOCK DATA — swap the button's call target once real Gemini
 // output is ready to test instead of this fixed sample.
 // ============================================================
-const String mockDietPlanJson = '''{"breakfast":{"1":["egg omlette with veggies","green chutney"],"2":["sourdough toast","dhania chutney","boiled aloo slice","guacamole","sprinkled mix seeds"],"3":["ragi oats dosa","boiled egg"],"4":["stir fry kacha kela","peanut butter","toast"],"5":["boiled peanut corn veggies salad","sweet potato"],"6":["ragi oats pancake","honey","fruit"]},"lunch":{"1":["boiled rice","palak paneer","salad"],"2":["quinoa veggies pulao","amaranth saag"],"3":["boiled rice","mutton curry","mix salad"],"4":["boiled rice","tori sabzi","stir fry paneer","salad"],"5":["boiled rice","soya matar sabzi","salad"],"6":["boiled rice or quinoa","pan fry fish","bhindi sabzi","salad"],"7":["curd rice","lauki sabzi"]},"dinner":{"1":["ragi roti","mix veg","salad"],"2":["boiled veggies","khichdi"],"3":["grilled chicken","corn veggies salad"],"4":["stir fry mushroom beans carrot","fish","ragi roti"],"5":["ragi roti","paneer capsicum sabzi","salad"],"6":["mix veg chila","pumpkin sabzi or soup","egg bhurji"],"7":["broccoli tofu tikki","green chutney"]}}''';
+const String mockDietPlanJson = '''{"breakfast":{"1":["YOUR MOM MUAHAHAHA","green chutney"],"2":["sourdough toast","dhania chutney","boiled aloo slice","guacamole","sprinkled mix seeds"],"3":["ragi oats dosa","boiled egg"],"4":["stir fry kacha kela","peanut butter","toast"],"5":["boiled peanut corn veggies salad","sweet potato"],"6":["ragi oats pancake","honey","fruit"]},"lunch":{"1":["boiled rice","palak paneer","salad"],"2":["quinoa veggies pulao","amaranth saag"],"3":["boiled rice","mutton curry","mix salad"],"4":["boiled rice","tori sabzi","stir fry paneer","salad"],"5":["boiled rice","soya matar sabzi","salad"],"6":["boiled rice or quinoa","pan fry fish","bhindi sabzi","salad"],"7":["curd rice","lauki sabzi"]},"dinner":{"1":["ragi roti","mix veg","salad"],"2":["boiled veggies","khichdi"],"3":["grilled chicken","corn veggies salad"],"4":["stir fry mushroom beans carrot","fish","ragi roti"],"5":["ragi roti","paneer capsicum sabzi","salad"],"6":["mix veg chila","pumpkin sabzi or soup","egg bhurji"],"7":["broccoli tofu tikki","green chutney"]}}''';
 
 // ============================================================
 // PARSING: turns Gemini's JSON into a structured week
@@ -243,42 +244,28 @@ Future<void> importDietPlanFromJson(
   String rawJson, {
   DateTime? startDate,
 }) async {
-  FunLoadingDialog.show(context);
-
   try {
-    print("========== STEP 1: PARSING JSON ==========");
     final dietPlan = WeeklyDietPlan.fromJsonString(rawJson);
-    dietPlan.dailyPlans.forEach((day, meals) {
-      print("Day +$day -> Breakfast: ${meals.breakfast} | Lunch: ${meals.lunch} | Dinner: ${meals.dinner}");
-    });
 
-    print("\n========== STEP 2: MATCHING AGAINST FOOD LIST (${GoogleSheetsApi.foodItems.length} items) ==========");
-    final updates = DietPlanMapper.buildCalendarUpdates(
+    final matches = buildDishMatches(
       plan: dietPlan,
       foodItems: GoogleSheetsApi.foodItems,
       startDate: startDate,
     );
 
-    print("\n========== STEP 3: WRITING TO GOOGLE SHEETS ==========");
-    await GoogleSheetsApi.applyPlanToCalendar(dayUpdates: updates);
-
-    print("========== DONE ==========");
-
     if (context.mounted) {
-      FunLoadingDialog.hide(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Weekly diet plan imported! Check console for match details.")),
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => DietReviewPage(matches: matches)),
       );
     }
-  } catch (e, stackTrace) {
-    print("Error importing diet plan: $e");
-    print(stackTrace);
-
+  } catch (e) {
+    print("Error preparing diet plan review: $e");
     if (context.mounted) {
-      FunLoadingDialog.hide(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Import failed: $e")),
       );
     }
   }
+
 }

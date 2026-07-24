@@ -106,10 +106,7 @@ class TopBar extends StatelessWidget {
                 child: InkWell(
                   onTap: () async {
                     HapticFeedback.lightImpact();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const PdfViewerTestPage()),
-                    );
+                    await pickAndSendPdf(context);
                   },
                   customBorder: const CircleBorder(),
                   child: const Padding(
